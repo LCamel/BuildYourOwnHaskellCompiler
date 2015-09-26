@@ -57,7 +57,74 @@ case = \season \val1 \val2 \val3 \val4  season val1 val2 val3 val4
 TRUE  = \val1 \val2  val1
 FALSE = \val1 \val2  val2
 ```
+回顧一下: 為什麼會想把春夏秋冬設計成那個樣子? 是為了將來撰寫使用 season 的 function 時, 可以依照 season 的值得到對應的 val1 val2 val3 val4. 所以乾脆就讓 season 本身來挑選對應的 value.
 
 
+
+
+
+## 記憶
+
+lambda expression 可以利用外層定義的變數. 可以做出看似"記憶"的效果.
+
+以 JavaScript 為例:
+```
+var f = function (x) {
+    return function () {
+        console.log("x was: " + x);
+    };
+}
+var f1 = f(123);
+f1(); // x was: 123
+var f2 = f(456);
+f2(); // x was: 456
+f1(); // x was: 123
+```
+我們在呼叫 f1 f2 的時候沒有給參數, 可是卻可以叫出暗藏於其中的 x 值.
+
+想要記住更多值也可以:
+```
+var f = function (x, y) {
+    return function () {
+        console.log("x: " + x + " y: " + y);
+    }
+};
+var f1 = f(3, 4);
+f1(); // x: 3 y: 4
+```
+或轉成每次只吃一個參數的:
+```
+var f = function (x) {
+    return function (y) {
+        return function () {
+            console.log("x: " + x + " y: " + y);
+        }
+    }
+}
+var f1 = f(3)(4);
+f1(); // x: 3 y: 4
+```
+但是 x y 光是暗藏在 function 裡面, 有辦法拿來用嗎?
+
+我們可以塞一個處理 x y 的 function 進去, 到時候再把暗藏的 x y 塞給它:
+```
+var f = function (x) {
+    return function (y) {
+        return function (processXY) {
+            processXY(x, y);
+        }
+    }
+}
+var f1 = f(3)(4);
+var proc = function (x, y) {
+    console.log("someone gives me x: " + x + " y: " + y);
+};
+f1(proc); // someone gives me x: 3 y: 4
+```
+這就是 pair:
+```
+pair = \x \y \proc  proc x y
+```
+要記更多東西也可以如法炮製.
 
 
