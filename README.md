@@ -15,7 +15,7 @@ Interpreter / compiler 只要處理 function / lambda expression 就好, 剩下�
 
 某些 type 長的像 enum, 只有固定幾個值. 像 boolean 只有 true/false, 像 season 只有 春/夏/秋/冬.
 
-Enum 用途不在運算, 而在撰寫處理該 enum 的 function 中, 放在 if / switch / case 來判斷.
+Enum 的用途不在運算, 而在撰寫處理該 enum 的 function 中, 放在 if / switch / case 來判斷.
 
 打個不太精確的比方:
 ```
@@ -106,7 +106,7 @@ f1(); // x: 3 y: 4
 ```
 但是 x y 光是暗藏在 function 裡面, 有辦法拿來用嗎?
 
-我們可以塞一個處理 x y 的 function 進去, 到時候再把暗藏的 x y 塞給它:
+我們可以預留一個洞, 要用時傳一個處理 x y 的 function 進去, 就能把暗藏的 x y 塞給它:
 ```
 var f = function (x) {
     return function (y) {
@@ -115,7 +115,8 @@ var f = function (x) {
         }
     }
 }
-var f1 = f(3)(4);
+var f1 = f(3)(4); // now f1 is loaded with 3 4
+
 var proc = function (x, y) {
     console.log("someone gives me x: " + x + " y: " + y);
 };
