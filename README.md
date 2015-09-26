@@ -63,7 +63,7 @@ FALSE = \val1 \val2  val2
 
 
 
-## 記憶
+### 記憶
 
 lambda expression 可以利用外層定義的變數. 可以做出看似"記憶"的效果.
 
@@ -129,3 +129,33 @@ pair = \x \y \proc  proc x y
 要記更多東西也可以如法炮製.
 
 
+### recursively-defined data type
+
+前面的 enum 雖然也可以列舉很多值, 但對於有無限個值的 type 來說, 用規則描述更輕鬆.
+
+像自然數:
+* zero 是個自然數
+* 如果 n 是個自然數, 則 succ(n) 也是個自然數
+
+因此 zero / succ(zero) / succ(succ(zero)) / succ(succ(succ(zero))) / ... 都是自然數.
+
+像 list:
+* [] 是個 list
+* 如果 xs 是個 list, 則 x : xs (或 cons x xs) 也是個 list
+
+因此 [] / a : [] / b : (a : []) / c : (b : (a : [])) / ... 都是 list.
+
+第一條給出種子, 第二條則描述怎麼擴展.
+
+因為所有值都是用這兩條生出來的, 所以拿到一個值時, 如果不是種子, 就一定是從某個舊值衍生出來的新值.
+處理這種值的程式常寫成
+```
+function foo(x) {
+    if (x is 種子) {
+        return 邊界值;
+    } else {
+        // x 應該是從某較小的舊值 x0 組出來的 (或許再加料)
+        return 某些處理(foo(x0))
+    }
+}
+```
