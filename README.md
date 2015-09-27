@@ -57,6 +57,24 @@ case = \season \val1 \val2 \val3 \val4  season val1 val2 val3 val4
 TRUE  = \val1 \val2  val1
 FALSE = \val1 \val2  val2
 ```
+
+用 ECMAScript 6 的 arrow function 句型模擬看看:
+```
+$ node -harmony
+> TRUE = (x) => (y) => x
+[Function]
+> FALSE = (x) => (y) => y
+[Function]
+> var val1 = 10, val2 = 20
+undefined
+> TRUE(val1)(val2)
+10
+> FALSE(val1)(val2)
+20
+>
+```
+
+
 回顧一下: 為什麼會想把春夏秋冬設計成那個樣子? 是為了將來撰寫使用 season 的 function 時, 可以依照 season 的值得到對應的 val1 val2 val3 val4. 所以乾脆就讓 season 本身來挑選對應的 value.
 
 
@@ -152,10 +170,29 @@ pair = \x \y \proc  proc x y
 ```
 function foo(x) {
     if (x is 種子) {
-        return 邊界值;
+        return foo的邊界值;
     } else {
-        // x 應該是從某較小的舊值 x0 組出來的 (或許再加料)
-        return 某些處理(foo(x0))
+        // x 是從某較小的舊值 xPre 組出來的 (或許再加料)
+        return foo的某些處理(xPre);
     }
 }
 ```
+用兩條規則生出來的, 就用兩條叉路拆解.
+
+這裡我們借用前面 enum 的技巧: 讓 value x 自己來選要走哪條路.
+```
+function foo(x) {
+    return x(foo的邊界值, foo的某些處理(xPre));
+}
+```
+當 x 是種子(0 / [])時傳回邊界值, 不然則把 xPre 塞給"某些處理".
+
+所以自然數 x 可以設計成兩個樣子:
+* 種子 0: \邊界值 \某些處理  邊界值
+* succ(xPre), 也就是某個 xPre 的下一個: \邊界值 \某些處理  某些處理(xPre)
+
+故 succ = \xPre \邊界值 \某些處理  某些處理(xPre)
+
+為什麼想把自然數設計成這個樣子, 完全是為了將來處理自然數的 function 而設計的.
+
+
