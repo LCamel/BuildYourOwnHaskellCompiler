@@ -166,33 +166,48 @@ pair = \x \y \proc  proc x y
 第一條給出種子, 第二條則描述怎麼擴展.
 
 因為所有值都是用這兩條生出來的, 所以拿到一個值時, 如果不是種子, 就一定是從某個舊值衍生出來的新值.
-處理這種值的程式常寫成
+
+想想那些處理 integer 的 function, 他們會面對兩種長相的 integer: zero 和 succ(n)
+* 碰到 zero 想傳回某個值
+* 碰到 succ(n) 想傳回另外一個和 n 有關的值
+
 ```
 function foo(x) {
-    if (x is 種子) {
-        return foo的邊界值;
+    if (x is zero) {
+        return foo0;
     } else {
-        // x 是從某較小的舊值 xPre 組出來的 (或許再加料)
-        return foo的某些處理(xPre);
+        x == succ(n) for some n
+        return procForFoo(n);
     }
 }
 ```
-用兩條規則生出來的, 就用兩條叉路拆解.
 
-這裡我們借用前面 enum 的技巧: 讓 value x 自己來選要走哪條路.
+我們套用先前 enum 的技巧: 觀察用戶端程式 foo 的樣子, 讓 x 自己做判斷, 並傳回對的值.
+
 ```
 function foo(x) {
-    return x(foo的邊界值, foo的某些處理(xPre));
+    return x(foo0, procForFoo);
 }
 ```
-當 x 是種子(0 / [])時傳回邊界值, 不然則把 xPre 塞給"某些處理".
 
-所以自然數 x 可以設計成兩個樣子:
-* 種子 0: \邊界值 \某些處理  邊界值
-* succ(xPre), 也就是某個 xPre 的下一個: \邊界值 \某些處理  某些處理(xPre)
+希望 x 這個 value 的設計能滿足:
+* x 如果是 zero, 會傳回 foo0
+* x 如果是 succ(n), 則會把 n 塞進 procForFoo, 傳回 procForFoo(n)
 
-故 succ = \xPre \邊界值 \某些處理  某些處理(xPre)
+或者說
+```
+     zero(foo0, procForFoo) = foo0
+(succ(n))(foo0, procForFoo) = procForFoo(n)
+```
 
-為什麼想把自然數設計成這個樣子, 完全是為了將來處理自然數的 function 而設計的.
+寫成 lambda expression
+```
+zero = \foo0 \procForFoo foo0
+希望 succ(n) 會是 \foo0 \procForFoo procForFoo n
+所以 succ = \n \foo0 \procForFoo procForFoo n
+```
+這個長相就是 Scott encoding.
+
+為什麼想把自然數設計成這個樣子, 就是從將來處理自然數的 function 觀察而來的.
 
 
