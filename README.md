@@ -211,3 +211,77 @@ zero = \foo0 \procForFoo foo0
 為什麼想把自然數設計成這個樣子, 就是從將來處理自然數的 function 觀察而來的.
 
 
+### Recursion
+我們自己建構的自然數, 可以轉換成一般 native 的 integer 嗎?
+```
+function toNative(x) {
+    if (x is zero) {
+        return 0;
+    } else {
+        x is succ(n) for some n
+        return 1 + toNative(n);
+    }
+}
+```
+也就是
+```
+function toNative(x) {
+    x(0, (n) => 1 + toNative(n));
+}
+```
+真的用 ECMAScript 6 寫看看:
+```
+$ node -harmony
+> zero = (z) => (p) => z
+[Function]
+> succ = (n) => (z) => (p) => p(n)
+[Function]
+> function toNative(x) { return x(0)( (n) => 1 + toNative(n) ); }
+undefined
+> toNative(zero)
+0
+> toNative(succ(zero))
+1
+> toNative(succ(succ(zero)))
+2
+>
+```
+
+<!--
+有了自然數, 想想 add(x, y) 要怎麼寫:
+```
+// 0 + y = y
+// succ(n) + y = n + succ(y)
+function add(x, y) {
+    if (x is zero) {
+        return y;
+    } else {
+        x == succ(n) for some n
+        return add(n, succ(y));
+    }
+}
+var add = function (x) {
+    return function (y) {
+        if (x == 0) {
+            return y;
+        } else {
+            x == succ(n) for some n
+            return add(n)(succ(y));
+        }
+    };
+};
+var add = 
+    function(add) {
+    return function (x) {
+    return function (y) {
+        if (x == 0) {
+            return y;
+        } else {
+            x == succ(n) for some n
+            return add(n)(succ(y));
+        }
+    }
+    }
+};
+```
+-->
