@@ -22,10 +22,22 @@ function parseOne(toks) {
 }
 function parse(line) { return parseOne(tokens(line)); }
 
+function unparse(exp) {
+    if (exp[0] == "var") return exp[1];
+    if (exp[0] == "lam") return `(λ${exp[1]} ${unparse(exp[2])})`;
+    return `(${unparse(exp[1])} ${unparse(exp[2])})`;
+}
 
+// TODO: es6 import
+exports.parse = parse;
+exports.unparse = unparse;
+
+/*
 function show(line) { console.log(JSON.stringify(parse(line))); }
 show("x");
 show("(\\x y)");
 show("((\\y z)(\\x y))");
 show("((λy z)(λx y))");
 show("((/y z)(/x y))");
+console.log(unparse(parse("((/y z)(/x y))")));
+*/
