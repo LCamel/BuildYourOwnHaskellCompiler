@@ -2,14 +2,14 @@
 var _parse = require("./parse.js"),
     parse = _parse.parse, unparse = _parse.unparse;
 
+
 function weak_normal_form(exp) {
     if (exp[0] == "var") { return exp; }
     if (exp[0] == "lam") { return exp; }
     if (exp[0] == "app") {
-        const [/*app*/, f, a] = exp;
-        const [maybeLam, x, y] = weak_normal_form(f); // todo
+        const [maybeLam, x, y] = weak_normal_form(exp[1]);
 	if (maybeLam == "lam") {
-            return sub(y, x, a);
+            return weak_normal_form(sub(y, x, exp[2]));
 	} else {
 	    return exp;
 	}
@@ -58,11 +58,8 @@ function freeVars(exp, bound) {
     }
 }
 
-function check(e0, e1) {
-    var e0s = JSON.stringify(e0);
-    var e1s = JSON.stringify(e1);
-    console.assert(e0s == e1s, "\n" + e0s + "\n" + e1s);
-}
+
+
 
 var subTestData = [
     ["u", "u", "v", "v"],
@@ -82,24 +79,3 @@ for (let [y, x, a, expected] of subTestData) {
     //console.log("#########2");
     console.assert(actual == expected, `y: ${y}\nx: ${x}\na: ${a}\nexpected: ${expected}\nactual: ${actual}`)
 }
-
-//function nextVar(vars) {
-//    return [...s].sort().pop() + "_";
-//}
-/*
-var ida = ["lam", "a", ["var", "c"]];
-var idb = ["lam", "b", ["var", "b"]];
-var exp = ["app", ida, idb];
-
-//console.log(normal(exp));
-check(sub(["var", "c"], "a", ["lam", "b", ["var", "b"]]),
-    ["var", "c"]);
-check(sub(["var", "a"], "a", ["lam", "b", ["var", "b"]]),
-    ["lam", "b", ["var", "b"]]);
-// (\u (\v v) u) (\w w)  ->  (\v v) (\w w)
-check(sub(["app", ["lam", "v", ["var", "v"]], ["var", "u"]],  "u",  ["lam", "w", ["var", "w"]]),
-    ["app", ["lam", "v", ["var", "v"]], ["lam", "w", ["var", "w"]]]);
-// (\u (\u u) u) (\w w)  ->  (\u u) (\w w)
-
-*/
-
