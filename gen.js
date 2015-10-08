@@ -26,15 +26,27 @@ function gen(vars, level) {
     return exps;
 }
 
+function hasFree(exp, bound) {
+    if (exp[0] == "var") { return ! bound.has(exp[1]); }
+    if (exp[0] == "app") { return hasFree(exp[1], bound) || hasFree(exp[2], bound); }
+    var newBound = new Set(bound);
+    newBound.add(exp[1]);
+    return hasFree(exp[2], newBound);
+}
+
 exports.gen = gen;
 
 /*
 var _parse = require("./parse.js"),
     parse = _parse.parse, unparse = _parse.unparse;
-for (let lvN of gen(["u", "v"], 2)) {
+for (let lvN of gen(["u", "v"], 3)) {
     console.log("======");
     for (let e of lvN) {
-        console.log(unparse(e));
+        //var free = hasFree(e, new Set());
+        //console.log(free + " " + unparse(e));
+	if (!hasFree(e, new Set())) {
+	    console.log(unparse(e));
+	}
     }
 }
 */
