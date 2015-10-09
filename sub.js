@@ -79,3 +79,20 @@ for (let [y, x, a, expected] of subTestData) {
     //console.log("#########2");
     console.assert(actual == expected, `y: ${y}\nx: ${x}\na: ${a}\nexpected: ${expected}\nactual: ${actual}`)
 }
+
+/*
+var a = ["app",["lam","+1",["app",["lam","0",["app",["lam","1",["app",["lam","2",["app",["lam","3",["app",["lam","4",["app",["lam","5",["app",["lam","6",["app",["lam","7",["app",["lam","8",["app",["lam","9",["app",["lam","nil",["app",["lam","cons",["app",["lam","Y",["app",["lam","take",["app",["lam","map",["app",["lam","0-1-2-",["app",["app",["var","take"],["var","5"]],["var","0-1-2-"]]],["app",["var","Y"],["lam","0-1-2-",["app",["app",["var","cons"],["var","0"]],["app",["app",["var","map"],["var","+1"]],["var","0-1-2-"]]]]]]],["lam","f",["app",["var","Y"],["lam","go",["lam","ls",["app",["app",["var","ls"],["lam","a",["lam","as",["app",["app",["var","cons"],["app",["var","f"],["var","a"]]],["app",["var","go"],["var","as"]]]]]],["var","nil"]]]]]]]],["app",["var","Y"],["lam","take",["lam","n",["lam","ls",["app",["app",["var","n"],["lam","n-",["app",["app",["var","ls"],["lam","a",["lam","as",["app",["app",["var","cons"],["var","a"]],["app",["app",["var","take"],["var","n-"]],["var","as"]]]]]],["var","nil"]]]],["var","nil"]]]]]]]],["lam","f",["app",["lam","x",["app",["var","f"],["app",["var","x"],["var","x"]]]],["lam","x",["app",["var","f"],["app",["var","x"],["var","x"]]]]]]]],["lam","a",["lam","as",["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["var","a"]],["var","as"]]]]]]]],["lam","is-cons",["lam","is-nil",["var","is-nil"]]]]],["app",["var","+1"],["var","8"]]]],["app",["var","+1"],["var","7"]]]],["app",["var","+1"],["var","6"]]]],["app",["var","+1"],["var","5"]]]],["app",["var","+1"],["var","4"]]]],["app",["var","+1"],["var","3"]]]],["app",["var","+1"],["var","2"]]]],["app",["var","+1"],["var","1"]]]],["app",["var","+1"],["var","0"]]]],["lam","s",["lam","z",["var","z"]]]]],["lam","n",["lam","s",["lam","z",["app",["var","s"],["var","n"]]]]]]
+;
+
+var b = ["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["lam","s",["lam","z",["var","z"]]]],["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["var","z"]]]]]]],["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["var","z"]]]]]]]]]],["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["var","z"]]]]]]]]]]]]],["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["app",["var","s"],["lam","s",["lam","z",["var","z"]]]]]]]]]]]]]]]],["lam","is-cons",["lam","is-nil",["var","is-nil"]]]]]]]]]]]]]]]]]]
+;
+
+var _rename = require('./rename.js'),
+    rename = _rename.rename;
+
+//var x = JSON.stringify(rename(normal_form(a)));
+//var y = JSON.stringify(rename(b));
+var x = JSON.stringify(normal_form(a));
+var y = JSON.stringify(b);
+console.assert(x == y);
+*/
