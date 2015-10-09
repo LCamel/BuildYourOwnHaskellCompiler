@@ -32,7 +32,6 @@ function rename(exp) { return rename0(exp, Env.empty(), new NextVar()); }
 // TODO: es6 import
 exports.rename = rename;
 
-
 /*
 var _parse = require("./parse.js"),
     parse = _parse.parse, unparse = _parse.unparse;
@@ -47,6 +46,9 @@ var testData = [
     ["(λv (λv v))", "(λ_0 (λ_1 _1))"],
     ["((λv v) (λv v))", "((λ_0 _0) (λ_1 _1))"],
     ["((λy y) (λx x))", "((λ_0 _0) (λ_1 _1))"],
+    ["(λ_1 (_1 _1))", "(λ_0 (_0 _0))"],
+    ["(λ_0 (_0 _0))", "(λ_0 (_0 _0))"],
+    ["(λ_1 (λ_0 _0))", "(λ_0 (λ_1 _1))"],
     ];
 for (let [orig, expected] of testData) {
     const actualExp = rename(parse(orig));
