@@ -25,7 +25,7 @@ function gen(vars, level) {
     }
     return exps;
 }
-
+// "bound" is a Set
 function hasFree(exp, bound) {
     if (exp[0] == "var") { return ! bound.has(exp[1]); }
     if (exp[0] == "app") { return hasFree(exp[1], bound) || hasFree(exp[2], bound); }
@@ -36,17 +36,22 @@ function hasFree(exp, bound) {
 
 exports.gen = gen;
 
-/*
+
+
 var _parse = require("./parse.js"),
     parse = _parse.parse, unparse = _parse.unparse;
-for (let lvN of gen(["u", "v"], 3)) {
-    console.log("======");
+var _rename = require("./rename.js"),
+    rename = _rename.rename;
+var dedupExps = new Set();
+for (let lvN of gen(["u", "v", "w"], 5)) {
+    //console.log("======");
     for (let e of lvN) {
         //var free = hasFree(e, new Set());
         //console.log(free + " " + unparse(e));
 	if (!hasFree(e, new Set())) {
-	    console.log(unparse(e));
+	    //console.log(unparse(e));
+	    dedupExps.add(unparse(rename(e)));
 	}
     }
 }
-*/
+console.log(dedupExps);
