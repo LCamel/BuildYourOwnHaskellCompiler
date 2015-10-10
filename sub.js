@@ -8,11 +8,11 @@ function weak_normal_form(exp) {
     if (exp[0] == "lam") { return exp; }
     if (exp[0] == "app") {
         const [maybeLam, x, y] = weak_normal_form(exp[1]);
-	if (maybeLam == "lam") {
+        if (maybeLam == "lam") {
             return weak_normal_form(sub(y, x, exp[2]));
-	} else {
-	    return exp;
-	}
+        } else {
+            return exp;
+        }
     }
 }
 function normal_form(exp) {
@@ -21,10 +21,10 @@ function normal_form(exp) {
     if (exp[0] == "app") {
         const [maybeLam, x, y] = weak_normal_form(exp[1]);
         if (maybeLam == "lam") {
-	    return normal_form(sub(y, x, exp[2])); 
-	} else {
-	    return ["app", normal_form(exp[1]), normal_form(exp[2])];
-	}
+            return normal_form(sub(y, x, exp[2])); 
+        } else {
+            return ["app", normal_form(exp[1]), normal_form(exp[2])];
+        }
     }
 }
 var nextVarIndex = 0;
@@ -38,14 +38,14 @@ function sub(y, x, a) {
         return ["app", sub(y[1], x, a), sub(y[2], x, a)];
     } else if (y[0] == "lam") {
         if (y[1] == x) return y;
-	var fvs = freeVars(a, new Set()); // ?
-	if (fvs.has(y[1])) { // oops
-	    // \x (\u ...x...) (\y u)
-	    var newVar = nextVar(); // cheat
-	    return ["lam", newVar, sub(sub(y[2], y[1], ["var", newVar]), x, a)];
-	} else {
-	    return ["lam", y[1], sub(y[2], x, a)];
-	}
+        var fvs = freeVars(a, new Set()); // ?
+        if (fvs.has(y[1])) { // oops
+            // \x (\u ...x...) (\y u)
+            var newVar = nextVar(); // cheat
+            return ["lam", newVar, sub(sub(y[2], y[1], ["var", newVar]), x, a)];
+        } else {
+            return ["lam", y[1], sub(y[2], x, a)];
+        }
     }
 }
 function freeVars(exp, bound) {
