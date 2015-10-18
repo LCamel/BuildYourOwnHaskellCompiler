@@ -34,10 +34,33 @@ function hasFree(exp, bound) {
     return hasFree(exp[2], newBound);
 }
 
+var _parse = require("./parse.js"),
+    parse = _parse.parse, unparse = _parse.unparse;
+var _rename = require("./rename.js"),
+    rename = _rename.rename;
+
+function genNoDup(vars, level) {
+    var dedupExps = new Set();
+    for (let lvN of gen(vars, level)) {
+        for (let e of lvN) {
+            if (!hasFree(e, new Set())) {
+                dedupExps.add(unparse(rename(e)));
+            }
+        }
+    }
+    var result = [];
+    for (let x of dedupExps) {
+        result.push(parse(x));
+        //console.log(JSON.stringify(parse(x)));
+    }
+    return result;
+}
+//console.log(genNoDup(["u", "v"], 3));
 exports.gen = gen;
+exports.genNoDup = genNoDup;
 
 
-
+/*
 var _parse = require("./parse.js"),
     parse = _parse.parse, unparse = _parse.unparse;
 var _rename = require("./rename.js"),
@@ -55,3 +78,4 @@ for (let lvN of gen(["u", "v", "w"], 5)) {
     }
 }
 console.log(dedupExps);
+*/
