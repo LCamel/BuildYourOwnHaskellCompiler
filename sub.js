@@ -30,6 +30,7 @@ function normal_form(exp) {
 var nextVarIndex = 0;
 function nextVar() { return "nv" + (nextVarIndex++); }
 
+// "y" will not be modified
 function sub(y, x, a) {
     // console.log(`sub: y: ${y} ## x: ${x} ## a: ${a}`);
     if (y[0] == "var") {
@@ -58,6 +59,54 @@ function freeVars(exp, bound) {
     }
 }
 
+// exp will not be modified
+function reduceLeftmostOutermost(exp) {
+    if (exp[0] === "var") {
+        return [false, exp];
+    } else if (exp[0] === "lam") {
+        var [reduceHappened, reducedBody] = reduceLeftmostOutermost(exp[2]);
+        return [reduceHappened, [exp[0], exp[1], reducedBody]];
+    } else {
+        // app
+        if (exp[1][0] === "lam") {
+            // yes !
+            return [true, sub(exp[1][2], exp[1][1], exp[2])];
+        } else {
+            var [reduceHappened, reducedBody] = reduceLeftmostOutermost(exp[1]);
+            if (reduceHappened) {
+                return [reduceHappened, ["app", reducedBody, exp[2]]];
+            } else {
+                var [reduceHappened2, reducedBody2] = reduceLeftmostOutermost(exp[2]);
+                return [reduceHappened2, ["app", exp[1], reducedBody2]];
+            }
+        }
+    }
+}
+
+function reduceLeftmostOutermostTillDone(exp) {
+    while (true) {
+        nextVarIndex = 0; //
+        var [reduceHappened, reducedExp] = reduceLeftmostOutermost(exp);
+        if (reduceHappened) {
+            exp = reducedExp;
+        } else {
+            return reducedExp;
+        }
+    }
+}
+
+var reduceLeftmostOutermostTestData = [
+    ["(λx x)", false, "(λx x)"],
+    ["((λx x) (λx x))", true, "(λx x)"],
+    ["(λx ((λx x) (λx x)))", true, "(λx (λx x))"],
+    ];
+for (let [expText, expectedreduceHappened, expectedText] of reduceLeftmostOutermostTestData) {
+    var exp = parse(expText);
+    var [actualReduceHappened, actualReducedExp] = reduceLeftmostOutermost(exp);
+    console.assert(actualReduceHappened == expectedreduceHappened);
+    var actualReducedExpText = unparse(actualReducedExp); 
+    console.assert(actualReducedExpText == expectedText, `actualReducedExpText: ${actualReducedExpText}`);
+}
 
 
 
@@ -80,7 +129,6 @@ for (let [y, x, a, expected] of subTestData) {
     console.assert(actual == expected, `y: ${y}\nx: ${x}\na: ${a}\nexpected: ${expected}\nactual: ${actual}`)
 }
 
-/*
 var a = ["app",["lam","+1",["app",["lam","0",["app",["lam","1",["app",["lam","2",["app",["lam","3",["app",["lam","4",["app",["lam","5",["app",["lam","6",["app",["lam","7",["app",["lam","8",["app",["lam","9",["app",["lam","nil",["app",["lam","cons",["app",["lam","Y",["app",["lam","take",["app",["lam","map",["app",["lam","0-1-2-",["app",["app",["var","take"],["var","5"]],["var","0-1-2-"]]],["app",["var","Y"],["lam","0-1-2-",["app",["app",["var","cons"],["var","0"]],["app",["app",["var","map"],["var","+1"]],["var","0-1-2-"]]]]]]],["lam","f",["app",["var","Y"],["lam","go",["lam","ls",["app",["app",["var","ls"],["lam","a",["lam","as",["app",["app",["var","cons"],["app",["var","f"],["var","a"]]],["app",["var","go"],["var","as"]]]]]],["var","nil"]]]]]]]],["app",["var","Y"],["lam","take",["lam","n",["lam","ls",["app",["app",["var","n"],["lam","n-",["app",["app",["var","ls"],["lam","a",["lam","as",["app",["app",["var","cons"],["var","a"]],["app",["app",["var","take"],["var","n-"]],["var","as"]]]]]],["var","nil"]]]],["var","nil"]]]]]]]],["lam","f",["app",["lam","x",["app",["var","f"],["app",["var","x"],["var","x"]]]],["lam","x",["app",["var","f"],["app",["var","x"],["var","x"]]]]]]]],["lam","a",["lam","as",["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["var","a"]],["var","as"]]]]]]]],["lam","is-cons",["lam","is-nil",["var","is-nil"]]]]],["app",["var","+1"],["var","8"]]]],["app",["var","+1"],["var","7"]]]],["app",["var","+1"],["var","6"]]]],["app",["var","+1"],["var","5"]]]],["app",["var","+1"],["var","4"]]]],["app",["var","+1"],["var","3"]]]],["app",["var","+1"],["var","2"]]]],["app",["var","+1"],["var","1"]]]],["app",["var","+1"],["var","0"]]]],["lam","s",["lam","z",["var","z"]]]]],["lam","n",["lam","s",["lam","z",["app",["var","s"],["var","n"]]]]]]
 ;
 
@@ -89,10 +137,50 @@ var b = ["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["lam",
 
 var _rename = require('./rename.js'),
     rename = _rename.rename;
+var _gen = require('./gen.js'),
+    genNoDup = _gen.genNoDup;
+console.log("1111111111");
+
+
+
+for (let exp of genNoDup(["u", "v", "w"], 6)) {
+    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 _1)))") continue;
+    if (unparse(exp) == "(λ_0 ((λ_1 (_1 _1)) (λ_2 (_2 _2))))") continue;
+    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
+    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
+    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 (_1 _1))))") continue;
+    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 ((_1 _1) _1)))") continue;
+    if (unparse(exp) == "((λ_0 (λ_1 (_0 _0))) (λ_2 (_2 _2)))") continue;
+    if (unparse(exp) == "((λ_0 (_0 (_0 _0))) (λ_1 (_1 _1)))") continue;
+    if (unparse(exp) == "((λ_0 ((_0 _0) _0)) (λ_1 (_1 _1)))") continue;
+    console.log(">>>>>>>>>>>>>>>>>>");
+    console.log("exp: "  + JSON.stringify(exp));
+    console.log("exp: "  + unparse(exp));
+console.log("222222222222");
+    var x = JSON.stringify(reduceLeftmostOutermostTillDone(exp));
+console.log("3333333");
+    var y = JSON.stringify(normal_form(exp));
+console.log("4444444");
+
+    if (x !== y) {
+        console.log("x: " + x);
+        console.log("y: " + y);
+        console.assert(x === y);
+    }
+
+    console.log("<<<<<<<<<<<<<<<<<<");
+   
+  //  console.log("exp: "  + exp);
+}
+console.log("bye~~~~");
+
 
 //var x = JSON.stringify(rename(normal_form(a)));
 //var y = JSON.stringify(rename(b));
-var x = JSON.stringify(normal_form(a));
+//
+//var x = JSON.stringify(normal_form(a));
+var x = JSON.stringify(reduceLeftmostOutermostTillDone(a));
 var y = JSON.stringify(b);
 console.assert(x == y);
-*/
+console.log(x);
+
