@@ -31,7 +31,7 @@ Applicative Order 先求參數所以會死, Normal Order 先求 body, 參數沒�
 ```
 function getBetaNormalFormWithNormalOrderEvaluationStrategy(exp) {
     while (true) {
-        redex = findLeftmostOutermostRedex(exp);
+        redex = findLeftmostOutermostRedex(exp); // pseudo code
         if (redex does exist) {
             exp = exp with redex being reduced;
         else
@@ -40,4 +40,31 @@ function getBetaNormalFormWithNormalOrderEvaluationStrategy(exp) {
     }
 }
 ```
+
+那, 怎麼找到所謂 leftmost outermost 的 redex 呢?
+
+Redex: ( (\x ...) ... ) 就是一個 redex. 也就是 tree 上有 ... ["app", ["lam", ...] ...] ... .
+
+什麼是 leftmost ? 據說是寫成一行文字時來比左右的.
+
+什麼是 outermost ? 據說是沒被別的 redux 包住的 redex. (所以光被別的 lambda 包沒關係)
+
+如果我們這樣做, 找出來的是 leftmost outermost redex 嗎?
+```
+function findLeftmostOutermostRedex(exp) {
+    if (exp[0] == "var") {
+        // not here
+    } else if (exp[0] == "app") {
+        if (exp[1][0] == "lam") { // is my left child a "lam" ?
+            // found it !!
+        } else {
+            // go left, then go right
+        }
+    } else {
+        // go right (the body)
+    }
+}
+```
+
+
 
