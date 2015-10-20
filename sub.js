@@ -109,14 +109,14 @@ function leftmostOutermost(exp, isWaiting = false) {
 }
 */
 function leftmostOutermost(exp) {
-    function me(exp, isWaiting) {
+    function me(exp, waitLam) {
         if (exp[0] === "var") { return exp; }
         if (exp[0] === "lam") {
-            return isWaiting ? exp : [exp[0], exp[1], me(exp[2], false)];
+            return waitLam ? exp : [exp[0], exp[1], me(exp[2], false)];
         }
         var newLeft = me(exp[1], true);
         if (newLeft[0] === "lam") {
-            return me(sub(newLeft[2], newLeft[1], exp[2]), isWaiting);
+            return me(sub(newLeft[2], newLeft[1], exp[2]), waitLam);
         } else {
             return ["app", newLeft, me(exp[2], false)];
         }
@@ -172,7 +172,7 @@ console.log("1111111111");
 
 
 
-for (let exp of genNoDup(["u", "v", "w"], 0)) {
+for (let exp of genNoDup(["u", "v", "w"], 6)) {
     if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 _1)))") continue;
     if (unparse(exp) == "(λ_0 ((λ_1 (_1 _1)) (λ_2 (_2 _2))))") continue;
     if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
