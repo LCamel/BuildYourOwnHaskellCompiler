@@ -94,6 +94,35 @@ function reduceLeftmostOutermostTillDone(exp) {
         }
     }
 }
+/*
+function leftmostOutermost(exp, isWaiting = false) {
+    if (exp[0] === "var") { return exp; }
+    if (exp[0] === "lam") {
+        return isWaiting ? exp : [exp[0], exp[1], leftmostOutermost(exp[2], false)];
+    }
+    var newLeft = leftmostOutermost(exp[1], true);
+    if (newLeft[0] === "lam") {
+        return leftmostOutermost(sub(newLeft[2], newLeft[1], exp[2]), isWaiting);
+    } else {
+        return ["app", newLeft, leftmostOutermost(exp[2], false)];
+    }
+}
+*/
+function leftmostOutermost(exp) {
+    function me(exp, isWaiting) {
+        if (exp[0] === "var") { return exp; }
+        if (exp[0] === "lam") {
+            return isWaiting ? exp : [exp[0], exp[1], me(exp[2], false)];
+        }
+        var newLeft = me(exp[1], true);
+        if (newLeft[0] === "lam") {
+            return me(sub(newLeft[2], newLeft[1], exp[2]), isWaiting);
+        } else {
+            return ["app", newLeft, me(exp[2], false)];
+        }
+    }
+    return me(exp, false);
+}
 
 var reduceLeftmostOutermostTestData = [
     ["(λx x)", false, "(λx x)"],
@@ -143,7 +172,7 @@ console.log("1111111111");
 
 
 
-for (let exp of genNoDup(["u", "v", "w"], 6)) {
+for (let exp of genNoDup(["u", "v", "w"], 0)) {
     if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 _1)))") continue;
     if (unparse(exp) == "(λ_0 ((λ_1 (_1 _1)) (λ_2 (_2 _2))))") continue;
     if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
@@ -153,13 +182,15 @@ for (let exp of genNoDup(["u", "v", "w"], 6)) {
     if (unparse(exp) == "((λ_0 (λ_1 (_0 _0))) (λ_2 (_2 _2)))") continue;
     if (unparse(exp) == "((λ_0 (_0 (_0 _0))) (λ_1 (_1 _1)))") continue;
     if (unparse(exp) == "((λ_0 ((_0 _0) _0)) (λ_1 (_1 _1)))") continue;
+    // needs rename:  ((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _2))))
     console.log(">>>>>>>>>>>>>>>>>>");
     console.log("exp: "  + JSON.stringify(exp));
     console.log("exp: "  + unparse(exp));
 console.log("222222222222");
-    var x = JSON.stringify(reduceLeftmostOutermostTillDone(exp));
+    //var x = JSON.stringify(reduceLeftmostOutermostTillDone(exp));
+    var x = JSON.stringify(rename(leftmostOutermost(exp)));
 console.log("3333333");
-    var y = JSON.stringify(normal_form(exp));
+    var y = JSON.stringify(rename(normal_form(exp)));
 console.log("4444444");
 
     if (x !== y) {
@@ -179,7 +210,8 @@ console.log("bye~~~~");
 //var y = JSON.stringify(rename(b));
 //
 //var x = JSON.stringify(normal_form(a));
-var x = JSON.stringify(reduceLeftmostOutermostTillDone(a));
+//var x = JSON.stringify(reduceLeftmostOutermostTillDone(a));
+var x = JSON.stringify(leftmostOutermost(a));
 var y = JSON.stringify(b);
 console.assert(x == y);
 console.log(x);
