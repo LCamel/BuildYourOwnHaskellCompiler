@@ -56,6 +56,8 @@ function freeVars(exp, bound) {
         return new Set([...freeVars(exp[1], bound), ...freeVars(exp[2], bound)]);
     } else if (exp[0] == "lam") {
         return freeVars(exp[2], new Set([...bound, exp[1]]));
+    } else if (exp[0] == "shr") {
+        return freeVars(exp[2], bound);
     }
 }
 
@@ -124,6 +126,64 @@ function leftmostOutermost(exp) {
     return me(exp, false);
 }
 
+function leftmostOutermostShared(exp) {
+    function me(exp, waitLam) {
+        console.log("=======");
+        console.log("me: exp: " + JSON.stringify(exp) + " waitLam: " + waitLam);
+        if (exp[0] === "var") { return exp; }
+        if (exp[0] === "lam") {
+            return waitLam ? exp : [exp[0], exp[1], me(exp[2], false)];
+        }
+        if (exp[0] == "shr") {
+            if (exp[1] == false) {
+                exp[1] = true;
+                var tmp = exp[2] = me(exp[2], waitLam);
+                console.log("shr going to return: 1 : " + JSON.stringify(tmp));
+                return tmp;
+            } else {
+                //return exp[2];
+                console.log("shr going to return: 2 : " + JSON.stringify(exp[2]));
+                return exp[2];
+            }
+        }
+        var newLeft = me(exp[1], true);
+        if (newLeft[0] === "lam") {
+            var shr = (exp[2][0] == "shr") ? exp[2] : ["shr", false, exp[2]];
+            shr = (shr[1] == true) ? shr[2] : shr;
+            var tmp = subShared(newLeft[2], newLeft[1], shr);
+            //var tmp = subShared(newLeft[2], newLeft[1], ["shr", false, exp[2]]);
+            console.log("subShared returns: " + JSON.stringify(tmp));
+            return me(tmp, waitLam);
+            //return me(subShared(newLeft[2], newLeft[1], ["shr", false, exp[2]]), waitLam);
+        } else {
+            return ["app", newLeft, me(exp[2], false)];
+        }
+    }
+    return me(exp, false);
+}
+function subShared(y, x, a) {
+    console.log(`sub: y: ${y} ## x: ${x} ## a: ${a}`);
+    if (y[0] == "var") {
+        if (y[1] == x) { return a; } else { return y; }
+    } else if (y[0] == "app") {
+        return ["app", subShared(y[1], x, a), subShared(y[2], x, a)];
+    } else if (y[0] == "lam") {
+        if (y[1] == x) return y;
+        var fvs = freeVars(a[2], new Set()); // ?
+        if (fvs.has(y[1])) { // oops
+            // \x (\u ...x...) (\y u)
+            var newVar = nextVar(); // cheat
+            return ["lam", newVar, subShared(sub(y[2], y[1], ["var", newVar]), x, a)];
+        } else {
+            return ["lam", y[1], subShared(y[2], x, a)];
+        }
+    } else if (y[0] == "shr") {
+        var tmp = subShared(y[2], x, a);
+        return (tmp[0] == "shr" && tmp[1] == true) ? tmp[2] : tmp;
+        //return subShared(y[2], x, a);
+    }
+}
+
 var reduceLeftmostOutermostTestData = [
     ["(λx x)", false, "(λx x)"],
     ["((λx x) (λx x))", true, "(λx x)"],
@@ -188,7 +248,8 @@ for (let exp of genNoDup(["u", "v", "w"], 6)) {
     console.log("exp: "  + unparse(exp));
 console.log("222222222222");
     //var x = JSON.stringify(reduceLeftmostOutermostTillDone(exp));
-    var x = JSON.stringify(rename(leftmostOutermost(exp)));
+    //var x = JSON.stringify(rename(leftmostOutermost(exp)));
+    var x = JSON.stringify(rename(leftmostOutermostShared(exp)));
 console.log("3333333");
     var y = JSON.stringify(rename(normal_form(exp)));
 console.log("4444444");
