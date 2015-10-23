@@ -6,7 +6,7 @@ var _parse = require('./parse.js'),
 
 const varCount = 3;
 const depth = 6;
-const name = `gen_${varCount}_${depth}`;
+const name = `generated_${varCount}_${depth}`;
 var vars = [];
 for (var i = 0; i < varCount; i++) { vars.push("a" + i); }
 
