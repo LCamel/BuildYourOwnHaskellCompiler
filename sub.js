@@ -229,6 +229,8 @@ var _rename = require('./rename.js'),
 //var _gen = require('./gen.js'),
 //    genNoDup = _gen.genNoDup;
 //
+
+// node -harmony gen_m_n.js > generated_3_6.js
 var generated_3_6 = require('./generated_3_6.js').generated_3_6;
 
 console.log("1111111111");
