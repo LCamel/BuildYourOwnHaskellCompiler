@@ -226,22 +226,26 @@ var b = ["lam","is-cons",["lam","is-nil",["app",["app",["var","is-cons"],["lam",
 
 var _rename = require('./rename.js'),
     rename = _rename.rename;
-var _gen = require('./gen.js'),
-    genNoDup = _gen.genNoDup;
+//var _gen = require('./gen.js'),
+//    genNoDup = _gen.genNoDup;
+//
+var generated_3_6 = require('./generated_3_6.js').generated_3_6;
+
 console.log("1111111111");
 
 
 
-for (let exp of genNoDup(["u", "v", "w"], 6)) {
-    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 _1)))") continue;
-    if (unparse(exp) == "(λ_0 ((λ_1 (_1 _1)) (λ_2 (_2 _2))))") continue;
-    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
-    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
-    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 (_1 _1))))") continue;
-    if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 ((_1 _1) _1)))") continue;
-    if (unparse(exp) == "((λ_0 (λ_1 (_0 _0))) (λ_2 (_2 _2)))") continue;
-    if (unparse(exp) == "((λ_0 (_0 (_0 _0))) (λ_1 (_1 _1)))") continue;
-    if (unparse(exp) == "((λ_0 ((_0 _0) _0)) (λ_1 (_1 _1)))") continue;
+//for (let exp of genNoDup(["u", "v", "w"], 6)) {
+for (let exp of generated_3_6) {
+    //if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 _1)))") continue;
+    //if (unparse(exp) == "(λ_0 ((λ_1 (_1 _1)) (λ_2 (_2 _2))))") continue;
+    //if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
+    //if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
+    //if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 (_1 _1))))") continue;
+    //if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 ((_1 _1) _1)))") continue;
+    //if (unparse(exp) == "((λ_0 (λ_1 (_0 _0))) (λ_2 (_2 _2)))") continue;
+    //if (unparse(exp) == "((λ_0 (_0 (_0 _0))) (λ_1 (_1 _1)))") continue;
+    //if (unparse(exp) == "((λ_0 ((_0 _0) _0)) (λ_1 (_1 _1)))") continue;
     // needs rename:  ((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _2))))
     console.log(">>>>>>>>>>>>>>>>>>");
     console.log("exp: "  + JSON.stringify(exp));
