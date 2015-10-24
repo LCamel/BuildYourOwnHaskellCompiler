@@ -128,8 +128,8 @@ function leftmostOutermost(exp) {
 
 function leftmostOutermostShared(exp) {
     function me(exp, waitLam) {
-        console.log("=======");
-        console.log("me: exp: " + JSON.stringify(exp) + " waitLam: " + waitLam);
+        //console.log("=======");
+        //console.log("me: exp: " + JSON.stringify(exp) + " waitLam: " + waitLam);
         if (exp[0] === "var") { return exp; }
         if (exp[0] === "lam") {
             return waitLam ? exp : [exp[0], exp[1], me(exp[2], false)];
@@ -138,11 +138,11 @@ function leftmostOutermostShared(exp) {
             if (exp[1] == false) {
                 exp[1] = true;
                 var tmp = exp[2] = me(exp[2], waitLam);
-                console.log("shr going to return: 1 : " + JSON.stringify(tmp));
+                //console.log("shr going to return: 1 : " + JSON.stringify(tmp));
                 return tmp;
             } else {
                 //return exp[2];
-                console.log("shr going to return: 2 : " + JSON.stringify(exp[2]));
+                //console.log("shr going to return: 2 : " + JSON.stringify(exp[2]));
                 return exp[2];
             }
         }
@@ -152,7 +152,7 @@ function leftmostOutermostShared(exp) {
             shr = (shr[1] == true) ? shr[2] : shr;
             var tmp = subShared(newLeft[2], newLeft[1], shr);
             //var tmp = subShared(newLeft[2], newLeft[1], ["shr", false, exp[2]]);
-            console.log("subShared returns: " + JSON.stringify(tmp));
+            //console.log("subShared returns: " + JSON.stringify(tmp));
             return me(tmp, waitLam);
             //return me(subShared(newLeft[2], newLeft[1], ["shr", false, exp[2]]), waitLam);
         } else {
@@ -231,14 +231,14 @@ var _rename = require('./rename.js'),
 //
 
 // node -harmony gen_m_n.js > generated_3_6.js
-var generated_3_6 = require('./generated_3_6.js').generated_3_6;
+//var generated_3_6 = require('./generated_3_6.js').generated_3_6;
+var generated_3_6_normal = JSON.parse(require("fs").readFileSync('./generated_3_6_normal.json'));
 
 console.log("1111111111");
 
 
-
 //for (let exp of genNoDup(["u", "v", "w"], 6)) {
-for (let exp of generated_3_6) {
+for (let [exp, normal] of generated_3_6_normal) {
     //if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (_1 _1)))") continue;
     //if (unparse(exp) == "(λ_0 ((λ_1 (_1 _1)) (λ_2 (_2 _2))))") continue;
     //if (unparse(exp) == "((λ_0 (_0 _0)) (λ_1 (λ_2 (_1 _1))))") continue;
@@ -259,12 +259,18 @@ console.log("222222222222");
 console.log("3333333");
     var y = JSON.stringify(rename(normal_form(exp)));
 console.log("4444444");
+    //y = JSON.stringify(normal);
 
     if (x !== y) {
         console.log("x: " + x);
         console.log("y: " + y);
         console.assert(x === y);
     }
+    //console.log("aaaa [");
+    //console.log("aaaa     " + JSON.stringify(exp));
+    //console.log("aaaa ,");
+    //console.log("aaaa     " + y);
+    //console.log("aaaa ],");
 
     console.log("<<<<<<<<<<<<<<<<<<");
    
@@ -283,3 +289,18 @@ var y = JSON.stringify(b);
 console.assert(x == y);
 console.log(x);
 
+function timeDiff(f) {
+    const t0 = Date.now();
+    console.log(f());
+    console.log(Date.now() - t0);
+}
+
+/*
+console.log("=================================");
+var w = "(\\x (x (x (x (x (x (x (x (x (x x))))))))))";
+w = `(${w} (${w} (${w} (${w} (${w} (${w} (${w} (${w} (\\x x)))))))))`;
+w = parse(w);
+timeDiff(() => leftmostOutermostShared(w));
+timeDiff(() => leftmostOutermost(w));
+timeDiff(() => normal_form(w));
+*/
