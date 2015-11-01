@@ -7,7 +7,7 @@ function toDeBruijn(exp, binds) {
         var i = 1;
         while (true) {
             if (binds[len - i] === name) {
-                return i;
+                return i; // TODO: 1 .. n (without the "var" tag?)
             }
             i++;
         }
@@ -16,7 +16,7 @@ function toDeBruijn(exp, binds) {
         return ["app", toDeBruijn(exp[1], binds), toDeBruijn(exp[2], binds)];
     }
     if (exp[0] === "lam") {
-        var newBinds = [...binds, exp[1]];
+        var newBinds = [...binds, exp[1]]; // TODO: better data structure
         return ["lam", toDeBruijn(exp[2], newBinds)];
     }
     throw "not here";
@@ -35,6 +35,59 @@ function fromDeBruijn(exp, binds, nextVarRef) {
     return ["var", binds[binds.length - exp]];
 }
 
+function beta(A, B) {
+    return doA(A, B, 1);
+}
+function doA(a, B, aLamDepth) {
+    if (a[0] === "app") {
+        return ["app", doA(a[1], B, aLamDepth), doA(a[2], B, aLamDepth)];
+    }
+    if (a[0] === "lam") {
+        return ["lam", doA(a[1], B, aLamDepth + 1)];
+    }
+    // var is just a number
+    if (a === aLamDepth) {
+        return doB(B, aLamDepth, 0);
+    } else if (a > aLamDepth) {
+        return a - 1;
+    } else {
+        return a;
+    }
+}
+function doB(b, aLamDepth, bLamDepth) {
+    if (b[0] === "app") {
+        return ["app", doB(b[1], aLamDepth, bLamDepth), doB(b[2], aLamDepth, bLamDepth)];
+    }
+    if (b[0] === "lam") {
+        return ["lam", doB(b[1], aLamDepth, bLamDepth + 1)];
+    }
+    // var is just a number
+    if (b > bLamDepth) {
+        return b + aLamDepth - 1;
+    } else {
+        return b;
+    }
+}
+function deBruijnLeftmost(exp, waitLam) {
+    if (exp[0] === "lam") {
+        if (waitLam) {
+            return exp;
+        } else {
+            return ["lam", deBruijnLeftmost(exp[1], false)];
+        }
+    }
+    if (exp[0] === "app") {
+        var newLeft = deBruijnLeftmost(exp[1], true);
+        if (newLeft[0] === "lam") {
+            return deBruijnLeftmost(beta(newLeft[1], exp[2]), waitLam);
+        } else {
+            return ["app", newLeft, deBruijnLeftmost(exp[2], false)];
+        }
+    }
+    // var exp is just a number
+    return exp;
+}
+
 
 var _parse = require("./parse.js"),
     parse = _parse.parse, unparse = _parse.unparse;
@@ -42,6 +95,8 @@ var _rename = require("./rename.js"),
     rename = _rename.rename;
 var generated_3_6_normal = JSON.parse(require("fs").readFileSync("generated_3_6_normal.json"));
 for (let [exp, normal] of generated_3_6_normal) {
+    /*
+    // conversion test
     var db = toDeBruijn(exp, []);
     var exp2 = fromDeBruijn(db, [], [0]);
     var x = JSON.stringify(exp);
@@ -51,6 +106,26 @@ for (let [exp, normal] of generated_3_6_normal) {
         console.log("y: " + y);
         throw "die";
     }
+    */
+    //console.log("==== normalize test ===="); 
+    //console.log("exp: " + JSON.stringify(exp));
+    var db = toDeBruijn(exp, []);
+    //console.log("db: " + JSON.stringify(db));
+    //console.log("----");
+    var normalDB = deBruijnLeftmost(db, false);
+    var exp2 = fromDeBruijn(normalDB, [], [0]);
+    var x = JSON.stringify(exp2);
+    var y = JSON.stringify(normal);
+    if (x !== y) {
+        console.log("----");
+        console.log("exp: " + JSON.stringify(exp));
+        console.log("db: " + JSON.stringify(db));
+        console.log("normalDB: " + JSON.stringify(normalDB));
+        console.log("x: " + x);
+        console.log("y: " + y);
+        throw "die";
+    }
+
 }
 console.log("done");
 
