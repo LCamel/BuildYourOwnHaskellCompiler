@@ -35,6 +35,8 @@ function fromDeBruijn(exp, binds, nextVarRef) {
     return ["var", binds[binds.length - exp]];
 }
 
+
+
 function beta(A, B) {
     return doA(A, B, 1);
 }
@@ -136,4 +138,21 @@ var db = toDeBruijn(exp, []);
 console.log(JSON.stringify(db));
 var exp2 = fromDeBruijn(db, [], [0]);
 console.log(JSON.stringify(exp2));
+*/
+/*
+function timeDiff(f) {
+    const t0 = Date.now();
+    console.log(f());
+    console.log(Date.now() - t0);
+}
+
+console.log("=================================");
+var w = "(\\x (x (x (x (x (x (x (x (x (x x))))))))))";
+w = `(${w} (${w} (${w} (${w} (${w} (${w} (${w} (${w} (\\x x)))))))))`;
+w = parse(w);
+w = toDeBruijn(w, []);
+//console.log(JSON.stringify(deBruijnLeftmost(w, false)));
+console.log("1111");
+timeDiff(() => deBruijnLeftmost(w, false));
+console.log("2222");
 */
