@@ -1,11 +1,25 @@
 "use strict";
 
+function getInternal(name) {
+    //console.log("getInternal: name: " + "##" + name + "##");
+    if (name === "+") {
+        return ["int", (x) => ["int", (y) => ["int", 
+            deBruijnLeftmost(x, false)[1] + 
+            deBruijnLeftmost(y, false)[1]
+        ]]];
+    }
+    return ["int", parseInt(name)];
+}
+
+
 function toDeBruijn(exp, binds) {
     if (exp[0] === "var") {
         const name = exp[1];
         const len = binds.length;
         var i = 1;
         while (true) {
+            if (i > len) { return getInternal(name); }
+
             if (binds[len - i] === name) {
                 return i; // TODO: 1 .. n (without the "var" tag?)
             }
@@ -31,9 +45,13 @@ function fromDeBruijn(exp, binds, nextVarRef) {
         return ["lam", newVar
                      , fromDeBruijn(exp[1], [...binds, newVar], nextVarRef)];
     }
+    if (exp[0] === "int") {
+        return exp;
+    }
     // var exp is a number
     return ["var", binds[binds.length - exp]];
 }
+
 
 
 
@@ -82,10 +100,14 @@ function deBruijnLeftmost(exp, waitLam) {
         var newLeft = deBruijnLeftmost(exp[1], true);
         if (newLeft[0] === "lam") {
             return deBruijnLeftmost(beta(newLeft[1], exp[2]), waitLam);
+        } else if (newLeft[0] === "int" && newLeft[1] instanceof Function) {
+            return deBruijnLeftmost(newLeft[1](exp[2]), waitLam);
         } else {
             return ["app", newLeft, deBruijnLeftmost(exp[2], false)];
         }
     }
+    // ["int" ...] can also be just returned as-is
+    
     // var exp is just a number
     return exp;
 }
@@ -139,6 +161,18 @@ console.log(JSON.stringify(db));
 var exp2 = fromDeBruijn(db, [], [0]);
 console.log(JSON.stringify(exp2));
 */
+
+//var exp = parse("((λx (λy (x y)))(λx 5))");
+var exp = parse("( ( +   ( (λy y) 2) )   ( (λy y) 3)    )");
+//var exp = parse("( ( +   2 )  3    )");
+console.log(JSON.stringify(exp));
+var db = toDeBruijn(exp, []);
+console.log(JSON.stringify(db));
+console.log("=========");
+var db = deBruijnLeftmost(db, false);
+
+var exp2 = fromDeBruijn(db, [], [0]);
+console.log(JSON.stringify(exp2));
 /*
 function timeDiff(f) {
     const t0 = Date.now();
@@ -148,7 +182,7 @@ function timeDiff(f) {
 
 console.log("=================================");
 var w = "(\\x (x (x (x (x (x (x (x (x (x x))))))))))";
-w = `(${w} (${w} (${w} (${w} (${w} (${w} (${w} (${w} (\\x x)))))))))`;
+w = `(${w} (${w} (${w} (${w} (${w} (${w} (\\x x)))))))`;
 w = parse(w);
 w = toDeBruijn(w, []);
 //console.log(JSON.stringify(deBruijnLeftmost(w, false)));
