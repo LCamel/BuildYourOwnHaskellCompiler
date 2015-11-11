@@ -14,6 +14,11 @@ function getInternal(name) {
             return ["int", [undefined, deBruijnLeftmost(world, false)[1]]]
         }]];
     }
+    if (name === "arrGet") {
+        return ["int", (arr) => ["int", (idx) => ["int", 
+            (deBruijnLeftmost(arr, false)[1]) [  deBruijnLeftmost(idx, false)[1]  ]
+        ]]];
+    }
 
 
     return ["int", parseInt(name)];
@@ -122,7 +127,7 @@ function deBruijnLeftmost(exp, waitLam) {
 
 
 var _parse = require("./parse.js"),
-    parse = _parse.parse, unparse = _parse.unparse;
+    parse = _parse.parse, unparse = _parse.unparse, parseFile = _parse.parseFile;
 var _rename = require("./rename.js"),
     rename = _rename.rename;
 var generated_3_6_normal = JSON.parse(require("fs").readFileSync("generated_3_6_normal.json"));
@@ -173,7 +178,10 @@ console.log(JSON.stringify(exp2));
 //var exp = parse("((λx (λy (x y)))(λx 5))");
 //var exp = parse("( ( +   ( (λy y) 2) )   ( (λy y) 3)    )");
 //var exp = parse("( ( +   2 )  3    )");
-var exp = parse("( print  3    )");
+
+//var bind = "(λioa (λf (λw0 (  (λa_w1  ((f  ((arrGet a_w1) 0))  ((arrGet a_w1) 1))    )    (ioa w0)     ))))"
+//var exp = parse(`((λbind ( print 3 )) ${bind}   )`);
+var exp = parseFile("DeBruijn.ulc");
 console.log(JSON.stringify(exp));
 var db = toDeBruijn(exp, []);
 console.log(JSON.stringify(db));
