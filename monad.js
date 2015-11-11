@@ -10,8 +10,6 @@
 "use strict";
 function print(a) {
     return function (world) {
-        //var tmp = [...world, a];
-        //return [undefined, tmp];
         console.log("print: " + a);
         return [undefined, world];
     };
@@ -40,9 +38,19 @@ function bind(ioa) {
 var bind = ioa => f => w0 => ( a_w1 => f(a_w1[0])(a_w1[1]) )(ioa(w0));
 
 
-var io1 = print("asdf");
-var io2 = bind(io1)((a) => getStr());
-var io3 = bind(io2)((a) => print(a));
+//var io1 = print("asdf");
+//var io2 = bind(io1)((a) => getStr());
+//var io3 = bind(io2)((a) => print(a));
+var foo = bind(print("First number?"))(function (x1) {
+    return bind(getStr())(function (x2) {
+        return bind(print("Got " + parseInt(x2) + ". Second number? "))(function (x3) {
+            return bind(getStr())(function (x4) {
+                return print("Got " + parseInt(x4) + ". Sum: " + (parseInt(x2) + parseInt(x4)));
+            });
+        });
+    });
+});
 
-io3("world");
+console.log("====");
+foo("world");
 console.log("done");
