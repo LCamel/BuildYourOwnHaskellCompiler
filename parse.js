@@ -30,7 +30,7 @@ function unparse(exp) {
 
 function parseFile(path) {
     var lines = require("fs").readFileSync(path) + "";
-    return parse(lines.replace(/\n/g, " "));
+    return parse(lines.replace(/(#.*)?\n/g, " "));
 }
 
 
