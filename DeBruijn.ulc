@@ -1,0 +1,9 @@
+(
+(
+λbind
+
+ ( print 4 )
+
+)
+(λioa (λf (λw0 (  (λa_w1  ((f  ((arrGet a_w1) 0))  ((arrGet a_w1) 1))    )    (ioa w0)     ))))
+)
