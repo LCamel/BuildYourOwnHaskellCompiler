@@ -8,6 +8,14 @@ function getInternal(name) {
             deBruijnLeftmost(y, false)[1]
         ]]];
     }
+    if (name === "print") {
+        return ["int", (a) => ["int", (world) => {
+            console.log("print: " + deBruijnLeftmost(a, false)[1]); 
+            return ["int", [undefined, deBruijnLeftmost(world, false)[1]]]
+        }]];
+    }
+
+
     return ["int", parseInt(name)];
 }
 
@@ -163,8 +171,9 @@ console.log(JSON.stringify(exp2));
 */
 
 //var exp = parse("((λx (λy (x y)))(λx 5))");
-var exp = parse("( ( +   ( (λy y) 2) )   ( (λy y) 3)    )");
+//var exp = parse("( ( +   ( (λy y) 2) )   ( (λy y) 3)    )");
 //var exp = parse("( ( +   2 )  3    )");
+var exp = parse("( print  3    )");
 console.log(JSON.stringify(exp));
 var db = toDeBruijn(exp, []);
 console.log(JSON.stringify(db));
@@ -172,7 +181,8 @@ console.log("=========");
 var db = deBruijnLeftmost(db, false);
 
 var exp2 = fromDeBruijn(db, [], [0]);
-console.log(JSON.stringify(exp2));
+//console.log(JSON.stringify(exp2));
+exp2[1]("world");
 /*
 function timeDiff(f) {
     const t0 = Date.now();
