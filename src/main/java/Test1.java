@@ -28,7 +28,7 @@ public class Test1 {
 
             {
                 // test normalization
-                Exp exp = DbExp.toExp(DbExp.leftMost(DbExp.fromExp(orig)));
+                Exp exp = DbExp.toExp(DbReduce.leftMost(DbExp.fromExp(orig)));
                 String s1 = normal.toJSONArray().toString();
                 String s2 = exp.toJSONArray().toString();
                 if (s1.equals(s2) == false) {
