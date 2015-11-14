@@ -28,9 +28,16 @@ function unparse(exp) {
     return `(${unparse(exp[1])} ${unparse(exp[2])})`;
 }
 
+function parseFile(path) {
+    var lines = require("fs").readFileSync(path) + "";
+    return parse(lines.replace(/(#.*)?\n/g, " "));
+}
+
+
 // TODO: es6 import
 exports.parse = parse;
 exports.unparse = unparse;
+exports.parseFile = parseFile;
 
 /*
 function show(line) { console.log(JSON.stringify(parse(line))); }
