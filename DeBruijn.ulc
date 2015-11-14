@@ -1,9 +1,20 @@
-(
-(
-λbind
+( ( bind (print 3) )     (λx1  (print 5)   )  )
 
- ( print 4 )
-
-)
-(λioa (λf (λw0 (  (λa_w1  ((f  ((arrGet a_w1) 0))  ((arrGet a_w1) 1))    )    (ioa w0)     ))))
-)
+##((arrGet ((print 3) 10000000)) 0)
+##( (λx1  (print 5)) 3)
+###(print 5)
+#
+#(
+#(
+#λbind
+#
+##( ( bind (print 3) ) (λx1  (print 5)))
+#( ( bind (print 3) ) print )
+#
+##(print 5)
+##((arrGet ((print 3) 10000000)) 1)
+#
+#
+#)
+#(λioa (λf (λw0 (  (λa_w1  ((f  ((arrGet a_w1) 0))  ((arrGet a_w1) 1))    )    (ioa w0)     ))))
+#)
