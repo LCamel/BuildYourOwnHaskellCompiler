@@ -75,8 +75,9 @@ public class Util {
             return new Var(token);
         }
     }
-    public static Exp parse(String line) {
-        return parseOne(getTokens(line));
+    public static Exp parse(String lamExpString) {
+        lamExpString = lamExpString.replaceAll("(#.*)?\\n", "");
+        return parseOne(getTokens(lamExpString));
     }
 
     public static Exp jsonToExp(JSONArray a) {
