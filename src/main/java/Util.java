@@ -47,10 +47,10 @@ public class Util {
         return new LinkedList<String>(Arrays.asList(tmp));
     }
     private static Exp parseOne(LinkedList<String> tokens) {
-        System.out.println("====");
-        System.out.println("tokens: " + tokens);
+        // System.out.println("====");
+        // System.out.println("tokens: " + tokens);
         String token = tokens.removeFirst();
-        System.out.println("tokens: " + tokens);
+        // System.out.println("tokens: " + tokens);
         switch (token) {
         case "(":
             Exp tmp = null;
