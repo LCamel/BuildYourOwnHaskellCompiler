@@ -3,7 +3,7 @@ import java.util.List;
 
 
 public interface DbExp {
-    static DbNat getInternal(String name) {
+    static DbNat getNative(String name) {
         try {
             int i = Integer.parseInt(name);
             return new DbNatInt(i);
@@ -40,7 +40,7 @@ public interface DbExp {
             while (true) {
                 int n = binds.size() - i;
                 if (n < 0) {
-                    return getInternal(name);
+                    return getNative(name);
                 }
                 if ((binds.get(n)).equals(name)) {
                     return new DbVar(i);
