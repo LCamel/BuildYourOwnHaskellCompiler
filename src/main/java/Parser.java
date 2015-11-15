@@ -1,7 +1,3 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import org.json.JSONArray;
 
 
@@ -16,8 +12,4 @@ public class Parser {
             return new Lam(a.getString(1), parse(a.getJSONArray(2)));
         }
     }
-    public static JSONArray parseFileAsJSONArray(String path) throws IOException {
-        return new JSONArray(new String(Files.readAllBytes(Paths.get(path))));
-    }
-
 }
