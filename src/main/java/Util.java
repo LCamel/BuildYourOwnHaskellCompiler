@@ -78,10 +78,7 @@ public class Util {
     public static Exp parse(String line) {
         return parseOne(getTokens(line));
     }
-    public static void main(String[] args) {
-        System.out.println(parse("(λ_1 (λ_0 _0))").toJSONArray());
 
-    }
     public static Exp jsonToExp(JSONArray a) {
         switch (a.getString(0)) {
         case "var":
