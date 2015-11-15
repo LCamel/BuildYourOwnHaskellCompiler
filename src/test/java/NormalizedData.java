@@ -38,8 +38,8 @@ public class NormalizedData {
         for (int i = 0; i < l.length(); i++) {
             JSONArray jsonPair = l.getJSONArray(i);
             Exp[] pair = new Exp[2];
-            pair[0] = Parser.jsonToExp(jsonPair.getJSONArray(0));
-            pair[1] = Parser.jsonToExp(jsonPair.getJSONArray(1));
+            pair[0] = Util.jsonToExp(jsonPair.getJSONArray(0));
+            pair[1] = Util.jsonToExp(jsonPair.getJSONArray(1));
             result.add(pair);
         }
         cachedListOfExpPairs = result;
