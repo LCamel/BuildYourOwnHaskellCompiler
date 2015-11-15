@@ -58,7 +58,7 @@ public class Util {
             case '\\':
             case '/':
             case 'λ':
-                tmp = new Lam(tokens.removeFirst().substring(0), parseOne(tokens));
+                tmp = new Lam(tokens.removeFirst().substring(1), parseOne(tokens));
                 break;
             default:
                 tmp = new App(parseOne(tokens), parseOne(tokens));
