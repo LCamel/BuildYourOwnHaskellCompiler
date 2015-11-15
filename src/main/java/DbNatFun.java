@@ -22,11 +22,4 @@ public class DbNatFun extends DbNat {
             return this;
         }
     }
-    public static void main(String[] a) {
-        DbNatFun fun = new DbNatFun(2,  "a", (args) ->
-            new DbNatInt(((DbNatInt) (args[0])).i + ((DbNatInt) (args[1])).i));
-        DbExp f1 = fun.passArg(new DbNatInt(3));
-        DbExp f2 = ((DbNatFun) f1).passArg(new DbNatInt(5));
-        System.out.println(((DbNatInt) f2).i);
-    }
 }
