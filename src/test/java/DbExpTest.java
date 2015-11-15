@@ -21,4 +21,12 @@ public class DbExpTest {
             Assert.assertEquals(s2, s1);
         }
     }
+    @Test
+    public void testNat() {
+        Exp exp = Util.parse("( ( +   ( (λy y) 6) )   ( (λy y) 4)    )");
+        DbExp dbExp = DbExp.fromExp(exp);
+        DbExp result = DbReduce.leftMost(dbExp);
+        int i = ((DbNatInt) result).i;
+        Assert.assertEquals(i, 10);
+    }
 }
