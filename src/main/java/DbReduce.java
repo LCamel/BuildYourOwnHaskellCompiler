@@ -2,10 +2,14 @@
 public class DbReduce {
 
     static DbExp beta(DbExp expA, DbExp expB) {
-        return doA(expA, 1, expB);
+        //System.out.println(">>>> beta: expA: " + expA + " expB: " + expB);
+        DbExp tmp = doA(expA, 1, expB);
+        //System.out.println("<<<< beta: result: " + tmp);
+        return tmp;
     }
 
     static DbExp doA(DbExp expA, int aLamDepth, DbExp expB) {
+        //System.out.println("doA: expA: " + expA + " expB: " + expB + " aLamDepth: " + aLamDepth);
         if (expA instanceof DbApp) {
             DbApp e = (DbApp) expA;
             return new DbApp(doA(e.left, aLamDepth, expB), doA(e.right, aLamDepth, expB));
@@ -24,7 +28,10 @@ public class DbReduce {
                 return new DbVar(e.i - 1);
             }
         }
-        throw new RuntimeException("Why?");
+        if (expA instanceof DbNat) {
+            return expA;
+        }
+        throw new RuntimeException("Why? expA: " + expA + " expB: " + expB);
     }
 
     static DbExp doB(DbExp expB, int bLamDepth, int aLamDepth) {

@@ -3,7 +3,7 @@ import java.util.List;
 
 
 public interface DbExp {
-    static DbNat getNative(String name) {
+    static DbExp getNative(String name) {
         try {
             int i = Integer.parseInt(name);
             return new DbNatInt(i);
@@ -11,7 +11,7 @@ public interface DbExp {
             return getNativeFunction(name);
         }
     }
-    static DbNatFun getNativeFunction(String name) {
+    static DbExp getNativeFunction(String name) {
         if (name.equals("+")) {
             return new DbNatFun(2, "+", (args) ->
                 new DbNatInt(
@@ -21,6 +21,16 @@ public interface DbExp {
                 )
             );
         }
+        if (name.equals("mkPair")) {
+            return DbExp.fromExp(Util.parse("(λx (λy (λf  ((f x) y)  )))")); // TODO: performance / const
+        }
+        if (name.equals("fst")) {
+            return DbExp.fromExp(Util.parse("(λx (λy x))")); // TODO: performance / const
+        }
+        if (name.equals("snd")) {
+            return DbExp.fromExp(Util.parse("(λx (λy y))")); // TODO: performance / const
+        }
+
         throw new RuntimeException("missed name: " + name);
     }
     static DbExp fromExp(Exp exp, List<String> binds) {

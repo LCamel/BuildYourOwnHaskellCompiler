@@ -6,4 +6,8 @@ public class DbApp implements DbExp {
         this.left = left;
         this.right = right;
     }
+    @Override
+    public String toString() {
+        return "(" + left + " " + right + ")";
+    }
 }

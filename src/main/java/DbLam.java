@@ -4,4 +4,8 @@ public class DbLam implements DbExp {
     public DbLam(DbExp body) {
         this.body = body;
     }
+    @Override
+    public String toString() {
+        return "(λ " + body + ")";
+    }
 }
