@@ -44,6 +44,9 @@ public class DbReduce {
                 return e;
             }
         }
+        if (expB instanceof DbNat) {
+            return expB;
+        }
         throw new RuntimeException("Why?");
     }
 
@@ -55,6 +58,10 @@ public class DbReduce {
                 DbLam lam = (DbLam) newLeft;
                 return leftMost(beta(lam.body, e.right), waitLam);
             }
+            if (newLeft instanceof DbNatFun) {
+                DbNatFun fun = (DbNatFun) newLeft;
+                return leftMost(fun.passArg(e.right), waitLam);
+            }
             return new DbApp(newLeft, leftMost(e.right, false));
         }
         if (exp instanceof DbLam) {
@@ -65,7 +72,10 @@ public class DbReduce {
         if (exp instanceof DbVar) {
             return exp;
         }
-        throw new RuntimeException("Why?");
+        if (exp instanceof DbNat) {
+            return exp;
+        }
+        throw new RuntimeException("Why? " + exp);
     }
 
     static DbExp leftMost(DbExp exp) {

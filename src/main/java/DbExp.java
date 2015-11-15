@@ -3,6 +3,35 @@ import java.util.List;
 
 
 public interface DbExp {
+    public static void main(String[] args) {
+        //Exp exp = Util.parse("((+ 10) 5)");
+        Exp exp = Util.parse("( ( +   ( (λy y) 6) )   ( (λy y) 4)    )");
+        DbExp dbExp = DbExp.fromExp(exp);
+        DbExp result = DbReduce.leftMost(dbExp);
+        int i = ((DbNatInt) result).i;
+        System.out.println("i: " + i);
+        System.out.println("ok");
+    }
+    static DbNat getInternal(String name) {
+        try {
+            int i = Integer.parseInt(name);
+            return new DbNatInt(i);
+        } catch (NumberFormatException e) {
+            return getNativeFunction(name);
+        }
+    }
+    static DbNatFun getNativeFunction(String name) {
+        if (name.equals("+")) {
+            return new DbNatFun(2, "+", (args) ->
+                new DbNatInt(
+                ((DbNatInt) DbReduce.leftMost(args[0])).i
+                +
+                ((DbNatInt) DbReduce.leftMost(args[1])).i
+                )
+            );
+        }
+        throw new RuntimeException("missed name: " + name);
+    }
     static DbExp fromExp(Exp exp, List<String> binds) {
         if (exp instanceof App) {
             App e = (App) exp;
@@ -15,10 +44,14 @@ public interface DbExp {
             return new DbLam(fromExp(e.body, newBinds));
         }
         if (exp instanceof Var) {
-            Var e = (Var) exp;
+            String name = ((Var) exp).name;
             int i = 1;
             while (true) {
-                if ((binds.get(binds.size() - i)).equals(e.name)) {
+                int n = binds.size() - i;
+                if (n < 0) {
+                    return getInternal(name);
+                }
+                if ((binds.get(n)).equals(name)) {
                     return new DbVar(i);
                 }
                 i++;
