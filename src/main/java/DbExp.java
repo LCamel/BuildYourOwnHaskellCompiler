@@ -30,6 +30,25 @@ public interface DbExp {
         if (name.equals("snd")) {
             return DbExp.fromExp(Util.parse("(λx (λy y))")); // TODO: performance / const
         }
+        if (name.equals("printInt")) {
+            // DbLam loadedPair = new DbLam(new DbApp(new DbApp(new DbVar(1), null), null));
+            return new DbNatFun(2, "printInt", (args) -> {
+                // DbNatInt -> World -> ((), World)
+                DbNatInt i = (DbNatInt) DbReduce.leftMost(args[0]);
+                DbNatWorld world = (DbNatWorld) DbReduce.leftMost(args[1]);
+
+                System.out.println("printInt: " + i.i);
+                // (λf  ((f x) y)  )
+                // take DbNatInt(11111) as () for now
+                // () should be ID
+                DbLam loadedPair = new DbLam(new DbApp(new DbApp(new DbVar(1), new DbNatInt(11111)), world));
+
+                return loadedPair;
+            });
+        }
+        if (name.equals("bindIO")) {
+            return DbExp.fromExp(Util.parse("(λio_a (λf (λworld0       (   (λa_world1   ( (f (a_world1 fst)) (a_world1 snd) )             )   (io_a world0)   )        )))"));
+        }
 
         throw new RuntimeException("missed name: " + name);
     }
