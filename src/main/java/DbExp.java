@@ -21,15 +21,15 @@ public interface DbExp {
                 )
             );
         }
-        if (name.equals("mkPair")) {
-            return DbExp.fromExp(Util.parse("(λx (λy (λf  ((f x) y)  )))")); // TODO: performance / const
-        }
-        if (name.equals("fst")) {
-            return DbExp.fromExp(Util.parse("(λx (λy x))")); // TODO: performance / const
-        }
-        if (name.equals("snd")) {
-            return DbExp.fromExp(Util.parse("(λx (λy y))")); // TODO: performance / const
-        }
+//        if (name.equals("mkPair")) {
+//            return DbExp.fromExp(Util.parse("(λx (λy (λf  ((f x) y)  )))")); // TODO: performance / const
+//        }
+//        if (name.equals("fst")) {
+//            return DbExp.fromExp(Util.parse("(λx (λy x))")); // TODO: performance / const
+//        }
+//        if (name.equals("snd")) {
+//            return DbExp.fromExp(Util.parse("(λx (λy y))")); // TODO: performance / const
+//        }
         if (name.equals("printInt")) {
             // DbLam loadedPair = new DbLam(new DbApp(new DbApp(new DbVar(1), null), null));
             return new DbNatFun(2, "printInt", (args) -> {
@@ -47,7 +47,8 @@ public interface DbExp {
             });
         }
         if (name.equals("bindIO")) {
-            return DbExp.fromExp(Util.parse("(λio_a (λf (λworld0       (   (λa_world1   ( (f (a_world1 fst)) (a_world1 snd) )             )   (io_a world0)   )        )))"));
+            //return DbExp.fromExp(Util.parse("(λio_a (λf (λworld0       (   (λa_world1   ( (f (a_world1 fst)) (a_world1 snd) )             )   (io_a world0)   )        )))"));
+            return DbExp.fromExp(Util.parse("(λio_a (λf (λworld0       (   (λa_world1   ( (f (a_world1  (λx (λy x))  )) (a_world1 (λx (λy y))  ) )             )   (io_a world0)   )        )))"));
         }
 
         throw new RuntimeException("missed name: " + name);

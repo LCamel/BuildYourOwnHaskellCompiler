@@ -12,21 +12,21 @@ public class DbNatFunTest {
         Assert.assertEquals(((DbNatInt) f2).i, 10);
     }
 
-    @Test
-    public void testMkPairFst() {
-        DbExp dbExp = DbExp.fromExp(Util.parse("(((mkPair 6) 4) fst)"));
-        //DbExp dbExp = DbExp.fromExp(Util.parse("((mkPair 6) 4)"));
-        //DbExp dbExp = DbExp.fromExp(Util.parse("(mkPair 6)"));
-        DbNatInt dbExp2 = (DbNatInt) DbReduce.leftMost(dbExp);
-        //System.out.println("dbExp2: " + dbExp2);
-        Assert.assertEquals(dbExp2.i, 6);
-    }
-    @Test
-    public void testMkPairSnd() {
-        DbExp dbExp = DbExp.fromExp(Util.parse("(((mkPair 6) 4) snd)"));
-        DbNatInt dbExp2 = (DbNatInt) DbReduce.leftMost(dbExp);
-        Assert.assertEquals(dbExp2.i, 4);
-    }
+//    @Test
+//    public void testMkPairFst() {
+//        DbExp dbExp = DbExp.fromExp(Util.parse("(((mkPair 6) 4) fst)"));
+//        //DbExp dbExp = DbExp.fromExp(Util.parse("((mkPair 6) 4)"));
+//        //DbExp dbExp = DbExp.fromExp(Util.parse("(mkPair 6)"));
+//        DbNatInt dbExp2 = (DbNatInt) DbReduce.leftMost(dbExp);
+//        //System.out.println("dbExp2: " + dbExp2);
+//        Assert.assertEquals(dbExp2.i, 6);
+//    }
+//    @Test
+//    public void testMkPairSnd() {
+//        DbExp dbExp = DbExp.fromExp(Util.parse("(((mkPair 6) 4) snd)"));
+//        DbNatInt dbExp2 = (DbNatInt) DbReduce.leftMost(dbExp);
+//        Assert.assertEquals(dbExp2.i, 4);
+//    }
 
     @Test
     public void testPrintInt() {
