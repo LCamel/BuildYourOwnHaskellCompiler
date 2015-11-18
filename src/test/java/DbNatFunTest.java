@@ -49,9 +49,16 @@ public class DbNatFunTest {
 
     @Test
     public void testBind() {
-        DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 123))  (λx (printInt 456))  )"));
-        // DbReduce.leftMost(dbExp); // TODO: why can't this exp be reduced ? why do i need a "world"?
-        DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
-        DbExp dbExp3 = DbReduce.leftMost(dbExp2);
+        // "(λio_a (λf (λworld0       (   (λa_world1   ( (f (a_world1  (λx (λy x))  )) (a_world1 (λx (λy y))  ) )             )   (io_a world0)   )        )))"
+        // (λx (+ 3) x)
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 123))  (λx (printInt 456))  )"));
+
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(λx ((+ 3) x))"));
+        DbExp dbExp = DbExp.fromExp(Util.parse("((λx ((+ 3) x)) 5)"));
+
+        DbExp result = DbReduce.leftMost(dbExp);
+        System.out.println("result: " + result);
+        //DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
+        //DbExp dbExp3 = DbReduce.leftMost(dbExp2);
     }
 }
