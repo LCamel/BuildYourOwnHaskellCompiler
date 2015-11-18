@@ -1,3 +1,5 @@
+import java.io.File;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -20,6 +22,13 @@ public class UtilTest {
         Exp exp = Util.parse(lamExpString);
         String actual = exp.toJSONArray().toString();
         String expected = "[\"lam\",\"_1\",[\"lam\",\"_0\",[\"var\",\"_0\"]]]";
+        Assert.assertEquals(actual, expected);
+    }
+    @Test
+    public void testParseFile() {
+        Exp exp = Util.parseFile(new File("src/test/resources/multiline.ulc"));
+        String actual = exp.toJSONArray().toString();
+        String expected = "[\"app\",[\"lam\",\"id\",[\"app\",[\"var\",\"id\"],[\"var\",\"id\"]]],[\"lam\",\"x\",[\"var\",\"x\"]]]";
         Assert.assertEquals(actual, expected);
     }
 }

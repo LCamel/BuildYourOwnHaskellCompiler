@@ -1,3 +1,6 @@
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -79,7 +82,15 @@ public class Util {
         lamExpString = lamExpString.replaceAll("(#.*)?\\n", "");
         return parseOne(getTokens(lamExpString));
     }
-
+    public static Exp parseFile(File f) {
+        try {
+            byte[] bytes = Files.readAllBytes(f.toPath());
+            String s = new String(bytes, StandardCharsets.UTF_8);
+            return parse(s);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
     public static Exp jsonToExp(JSONArray a) {
         switch (a.getString(0)) {
         case "var":
