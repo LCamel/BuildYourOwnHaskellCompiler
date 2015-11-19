@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 
 public interface DbExp {
@@ -43,6 +44,19 @@ public interface DbExp {
                 // () should be ID
                 DbLam loadedPair = new DbLam(new DbApp(new DbApp(new DbVar(1), new DbNatInt(11111)), world));
 
+                return loadedPair;
+            });
+        }
+        if (name.equals("readInt")) {
+            return new DbNatFun(1, "readInt", (args) -> {
+                DbNatWorld world = (DbNatWorld) DbReduce.leftMost(args[0]);
+
+                Scanner scanner = new Scanner(System.in);
+                //String line = scanner.nextLine();
+                DbNatInt a = new DbNatInt(scanner.nextInt());
+                scanner.close();
+
+                DbLam loadedPair = new DbLam(new DbApp(new DbApp(new DbVar(1), a), world));
                 return loadedPair;
             });
         }

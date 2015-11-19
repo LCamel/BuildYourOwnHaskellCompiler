@@ -51,14 +51,32 @@ public class DbNatFunTest {
     public void testBind() {
         // "(λio_a (λf (λworld0       (   (λa_world1   ( (f (a_world1  (λx (λy x))  )) (a_world1 (λx (λy y))  ) )             )   (io_a world0)   )        )))"
         // (λx (+ 3) x)
-        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 123))  (λx (printInt 456))  )"));
+        DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 123))  (λx (printInt 456))  )"));
 
         //DbExp dbExp = DbExp.fromExp(Util.parse("(λx ((+ 3) x))"));
-        DbExp dbExp = DbExp.fromExp(Util.parse("((λx ((+ 3) x)) 5)"));
+        //DbExp dbExp = DbExp.fromExp(Util.parse("((λx ((+ 3) x)) 5)"));
 
-        DbExp result = DbReduce.leftMost(dbExp);
-        System.out.println("result: " + result);
-        //DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
-        //DbExp dbExp3 = DbReduce.leftMost(dbExp2);
+        //DbExp result = DbReduce.leftMost(dbExp);
+        //System.out.println("result: " + result);
+        DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
+        DbExp dbExp3 = DbReduce.leftMost(dbExp2);
     }
+
+    @Test
+    public void testInputOutput() {
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)   (λx (printInt x))  )"));
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 5))   printInt  )"));
+        DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)  printInt  )"));
+        DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
+        System.out.println("dbExp2: " + dbExp2);
+        DbReduce.leftMost(dbExp2);
+    }
+
+//    @Test
+//    public void testInputOutput22() {
+//        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)   (λx (printInt x))  )"));
+//        DbExp dbExp = DbExp.fromExp(Util.parse("bindIO"));
+//        System.out.println("dbExp2: " + dbExp);
+//    }
+
 }

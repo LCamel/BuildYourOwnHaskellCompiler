@@ -2,9 +2,9 @@
 public class DbReduce {
 
     static DbExp beta(DbExp expA, DbExp expB) {
-        //System.out.println(">>>> beta: expA: " + expA + " expB: " + expB);
+        System.out.println(">>>> beta: expA: " + expA + " expB: " + expB);
         DbExp tmp = doA(expA, 1, expB);
-        //System.out.println("<<<< beta: result: " + tmp);
+        System.out.println("<<<< beta: result: " + tmp);
         return tmp;
     }
 
@@ -58,6 +58,7 @@ public class DbReduce {
     }
 
     static DbExp leftMost(DbExp exp, boolean waitLam) {
+        System.out.println("leftMost: " + exp);
         if (exp instanceof DbApp) {
             DbApp e = (DbApp) exp;
             DbExp newLeft = leftMost(e.left, true);

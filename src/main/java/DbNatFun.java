@@ -14,6 +14,7 @@ public class DbNatFun extends DbNat {
         this.eval = eval;
     }
     public DbExp passArg(DbExp arg) {
+        System.out.println("passArg[" + name + " " + System.identityHashCode(this) + "](" + (argIdx + 1) + "/" + args.length + "): " + arg);
         args[argIdx] = arg;
         argIdx++;
         if (argIdx == args.length) {
