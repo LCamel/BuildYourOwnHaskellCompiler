@@ -8,6 +8,7 @@ public class DbNatFun extends DbNat {
     private int argIdx = 0;
     private final String name;
     private final Eval eval;
+    private DbExp result = null;
     public DbNatFun(int numArgs, String name, Eval eval) {
         args = new DbExp[numArgs];
         this.name = name;
@@ -18,7 +19,14 @@ public class DbNatFun extends DbNat {
         args[argIdx] = arg;
         argIdx++;
         if (argIdx == args.length) {
-            return eval.eval(args);
+            // TODO: think
+            // the only chance that a single DbNatFun object being used multiple times
+            // should be the "argument" case
+            if (result == null) {
+                result = eval.eval(args);
+            }
+            argIdx = 0;
+            return result;
         } else {
             return this;
         }

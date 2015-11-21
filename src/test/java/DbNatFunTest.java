@@ -65,10 +65,11 @@ public class DbNatFunTest {
     @Test
     public void testInputOutput() {
         //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)   (λx (printInt x))  )"));
-        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 5))   printInt  )"));
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 5))   (λx (printInt 33))  )"));
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)  (λx (printInt x))  )"));
         DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)  printInt  )"));
         DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
-        System.out.println("dbExp2: " + dbExp2);
+        System.out.println("==== dbExp2: " + dbExp2);
         DbReduce.leftMost(dbExp2);
     }
 
