@@ -1,0 +1,9 @@
+((bindIO (printInt 1111)) (λx1
+    ((bindIO readInt) (λx2
+        ((bindIO (printInt 2222)) (λx3
+            ((bindIO readInt) (λx4
+                (printInt ((+ x2) x4))
+            ))
+        ))
+    ))
+))

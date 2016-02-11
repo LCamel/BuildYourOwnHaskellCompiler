@@ -1,3 +1,5 @@
+import java.io.File;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -72,6 +74,16 @@ public class DbNatFunTest {
         System.out.println("==== dbExp2: " + dbExp2);
         DbReduce.leftMost(dbExp2);
     }
+    @Test
+    public void testInputOutput2() {
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)   (λx (printInt x))  )"));
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 5))   (λx (printInt 33))  )"));
+        //DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO readInt)  (λx (printInt x))  )"));
+        DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 3))  (λx readInt ))"));
+        DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
+        System.out.println("==== dbExp2: " + dbExp2);
+        DbReduce.leftMost(dbExp2);
+    }
 
 //    @Test
 //    public void testInputOutput22() {
@@ -79,5 +91,11 @@ public class DbNatFunTest {
 //        DbExp dbExp = DbExp.fromExp(Util.parse("bindIO"));
 //        System.out.println("dbExp2: " + dbExp);
 //    }
-
+    @Test
+    public void testBindIO() {
+        DbExp dbExp = DbExp.fromExp(Util.parseFile(new File("src/test/resources/BindIO.ulc")));
+        System.out.println("dbExp: " + dbExp);
+        DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
+        DbReduce.leftMost(dbExp2);
+    }
 }

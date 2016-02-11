@@ -51,10 +51,8 @@ public interface DbExp {
             return new DbNatFun(1, "readInt", (args) -> {
                 DbNatWorld world = (DbNatWorld) DbReduce.leftMost(args[0]);
 
-                Scanner scanner = new Scanner(System.in);
-                //String line = scanner.nextLine();
+                Scanner scanner = new Scanner(System.in); // TODO: no close() !
                 DbNatInt a = new DbNatInt(scanner.nextInt());
-                scanner.close();
 
                 DbLam loadedPair = new DbLam(new DbApp(new DbApp(new DbVar(1), a), world));
                 return loadedPair;
