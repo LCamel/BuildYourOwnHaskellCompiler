@@ -1,40 +1,19 @@
 package l;
 
+// 因為還想不清楚, 所以先用實作代替 spec
 public class Evaluator {
 
     public interface App {
         Object getLeft();
         Object getRight();
-        App gen(Object left, Object right);
+        App gen(Object left, Object right); // may return the same object
     }
-//    public static class AppNode implements App {
-//        public final Object left;
-//        public final Object right;
-//        public AppNode(Object l, Object r) { left = l; right = r; }
-//        @Override
-//        public Object getLeft() { return left; }
-//        @Override
-//        public Object getRight() { return right; }
-//    }
-
     public interface Lam {
         Object apply(Object arg);
         Object getBody();
         Lam gen(Object body);
     }
-//    public static class LamNode implements Lam {
-//
-//        @Override
-//        public Object apply(Object arg) {
-//            return null;
-//        }
-//
-//        @Override
-//        public Object getBody() {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//    }
+
     public interface Var {
     }
 
@@ -43,6 +22,7 @@ public class Evaluator {
     // 要讓 node 自己可以生成自己嗎? (在沒有 change 的狀況下, 至少只會生和自己一樣的 node 出來)
 
 
+    // only for returning two values
     private static class NodeAndChanged {
         public final Object node;
         public final boolean changed;
@@ -63,6 +43,7 @@ public class Evaluator {
         }
     }
     public NodeAndChanged evalOnce(Object node) {
+        // apply
         if (node instanceof App) {
             App app = (App) node;
             if (app.getLeft() instanceof Lam) {
@@ -71,15 +52,14 @@ public class Evaluator {
             }
         }
 
+        // recursion
         if (node instanceof App) {
             App app = (App) node;
             NodeAndChanged tmp1 = evalOnce(app.getLeft());
             if (tmp1.changed == true) {
-                //return new NodeAndChanged(new AppNode(tmp1.node, app.getRight()), true);
                 return new NodeAndChanged(app.gen(tmp1.node, app.getRight()), true);
             } else {
                 NodeAndChanged tmp2 = evalOnce(app.getRight());
-                //return new NodeAndChanged(new AppNode(tmp1.node, tmp2.node), tmp2.changed);
                 return new NodeAndChanged(app.gen(tmp1.node, tmp2.node), tmp2.changed);
             }
         }
