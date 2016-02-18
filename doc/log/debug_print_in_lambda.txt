@@ -1,0 +1,88 @@
+        DbExp dbExp = DbExp.fromExp(Util.parse("(  (bindIO (printInt 5))   (λx (printInt 456))  )"));
+        DbExp dbExp2 = new DbApp(dbExp, new DbNatWorld());
+        System.out.println("dbExp2: " + dbExp2);
+        DbReduce.leftMost(dbExp2);
+
+
+
+
+
+[TestNG] Running:
+  /private/var/folders/kz/k2wgmkdd5bzb9g0jwv66sdn400272l/T/testng-eclipse--1613864254/testng-customsuite.xml
+
+dbExp2: ((((λ (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) (DbVar[3] DbVar[1]))))) (DbNatFun[printInt] DbNatInt[5])) (λ (DbNatFun[printInt] DbNatInt[456]))) DbNatWorld@61a485d2)
+leftMost: ((((λ (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) (DbVar[3] DbVar[1]))))) (DbNatFun[printInt] DbNatInt[5])) (λ (DbNatFun[printInt] DbNatInt[456]))) DbNatWorld@61a485d2)
+leftMost: (((λ (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) (DbVar[3] DbVar[1]))))) (DbNatFun[printInt] DbNatInt[5])) (λ (DbNatFun[printInt] DbNatInt[456])))
+leftMost: ((λ (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) (DbVar[3] DbVar[1]))))) (DbNatFun[printInt] DbNatInt[5]))
+leftMost: (λ (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) (DbVar[3] DbVar[1])))))
+>>>> beta: expA: (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) (DbVar[3] DbVar[1])))) expB: (DbNatFun[printInt] DbNatInt[5])
+<<<< beta: result: (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbVar[1]))))
+leftMost: (λ (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbVar[1]))))
+>>>> beta: expA: (λ ((λ ((DbVar[3] (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbVar[1]))) expB: (λ (DbNatFun[printInt] DbNatInt[456]))
+<<<< beta: result: (λ ((λ (((λ (DbNatFun[printInt] DbNatInt[456])) (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbVar[1])))
+leftMost: (λ ((λ (((λ (DbNatFun[printInt] DbNatInt[456])) (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbVar[1])))
+>>>> beta: expA: ((λ (((λ (DbNatFun[printInt] DbNatInt[456])) (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbVar[1])) expB: DbNatWorld@61a485d2
+<<<< beta: result: ((λ (((λ (DbNatFun[printInt] DbNatInt[456])) (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2))
+leftMost: ((λ (((λ (DbNatFun[printInt] DbNatInt[456])) (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1]))))) ((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2))
+leftMost: (λ (((λ (DbNatFun[printInt] DbNatInt[456])) (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1])))))
+>>>> beta: expA: (((λ (DbNatFun[printInt] DbNatInt[456])) (DbVar[1] (λ (λ DbVar[2])))) (DbVar[1] (λ (λ DbVar[1])))) expB: ((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2)
+<<<< beta: result: (((λ (DbNatFun[printInt] DbNatInt[456])) (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[2])))) (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[1]))))
+leftMost: (((λ (DbNatFun[printInt] DbNatInt[456])) (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[2])))) (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[1]))))
+leftMost: ((λ (DbNatFun[printInt] DbNatInt[456])) (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[2]))))
+leftMost: (λ (DbNatFun[printInt] DbNatInt[456]))
+>>>> beta: expA: (DbNatFun[printInt] DbNatInt[456]) expB: (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[2])))
+<<<< beta: result: (DbNatFun[printInt] DbNatInt[456])
+leftMost: (DbNatFun[printInt] DbNatInt[456])
+leftMost: DbNatFun[printInt]
+passArg[printInt 972765878](1/2): DbNatInt[456]
+leftMost: DbNatFun[printInt]
+passArg[printInt 972765878](2/2): (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[1])))
+leftMost: DbNatInt[456]
+leftMost: (((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2) (λ (λ DbVar[1])))
+leftMost: ((DbNatFun[printInt] DbNatInt[5]) DbNatWorld@61a485d2)
+leftMost: (DbNatFun[printInt] DbNatInt[5])
+leftMost: DbNatFun[printInt]
+passArg[printInt 1651945012](1/2): DbNatInt[5]
+leftMost: DbNatFun[printInt]
+passArg[printInt 1651945012](2/2): DbNatWorld@61a485d2
+leftMost: DbNatInt[5]
+leftMost: DbNatWorld@61a485d2
+printInt: 5
+leftMost: (λ ((DbVar[1] DbNatInt[11111]) DbNatWorld@61a485d2))
+>>>> beta: expA: ((DbVar[1] DbNatInt[11111]) DbNatWorld@61a485d2) expB: (λ (λ DbVar[1]))
+<<<< beta: result: (((λ (λ DbVar[1])) DbNatInt[11111]) DbNatWorld@61a485d2)
+leftMost: (((λ (λ DbVar[1])) DbNatInt[11111]) DbNatWorld@61a485d2)
+leftMost: ((λ (λ DbVar[1])) DbNatInt[11111])
+leftMost: (λ (λ DbVar[1]))
+>>>> beta: expA: (λ DbVar[1]) expB: DbNatInt[11111]
+<<<< beta: result: (λ DbVar[1])
+leftMost: (λ DbVar[1])
+>>>> beta: expA: DbVar[1] expB: DbNatWorld@61a485d2
+<<<< beta: result: DbNatWorld@61a485d2
+leftMost: DbNatWorld@61a485d2
+printInt: 456
+leftMost: (λ ((DbVar[1] DbNatInt[11111]) DbNatWorld@61a485d2))
+leftMost: ((DbVar[1] DbNatInt[11111]) DbNatWorld@61a485d2)
+leftMost: (DbVar[1] DbNatInt[11111])
+leftMost: DbVar[1]
+leftMost: DbNatInt[11111]
+leftMost: DbNatWorld@61a485d2
+PASSED: testInputOutput
+
+===============================================
+    Default test
+    Tests run: 1, Failures: 0, Skips: 0
+===============================================
+
+
+===============================================
+Default suite
+Total tests run: 1, Failures: 0, Skips: 0
+===============================================
+
+[TestNG] Time taken by [FailedReporter passed=0 failed=0 skipped=0]: 0 ms
+[TestNG] Time taken by org.testng.reporters.XMLReporter@7d6f77cc: 15 ms
+[TestNG] Time taken by org.testng.reporters.JUnitReportReporter@16b3fc9e: 4 ms
+[TestNG] Time taken by org.testng.reporters.SuiteHTMLReporter@1175e2db: 11 ms
+[TestNG] Time taken by org.testng.reporters.EmailableReporter2@470e2030: 4 ms
+[TestNG] Time taken by org.testng.reporters.jq.Main@26f0a63f: 29 ms
