@@ -32,7 +32,7 @@ public class Evaluator {
         }
     }
 
-    public Object eval(Object node) {
+    public static Object eval(Object node) {
         while (true) {
             NodeAndChanged tmp = evalOnce(node);
             if (tmp.changed == true) {
@@ -42,7 +42,7 @@ public class Evaluator {
             }
         }
     }
-    public NodeAndChanged evalOnce(Object node) {
+    public static NodeAndChanged evalOnce(Object node) {
         // apply
         if (node instanceof App) {
             App app = (App) node;
