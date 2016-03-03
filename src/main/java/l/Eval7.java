@@ -48,7 +48,7 @@ public class Eval7 {
         @Override
         public void replace(Node node) {
             path.pop();
-            path.push(node);
+
             Node parent = path.peek();
             if (parent instanceof Lam) {
                 ((Lam) parent).setBody(node);
@@ -61,6 +61,8 @@ public class Eval7 {
             } else {
                 throw new RuntimeException("replace: how come? " + parent);
             }
+
+            path.push(node);
         }
 
         @Override
@@ -230,18 +232,22 @@ public class Eval7 {
 
 
     public static void main(String[] args) {
-        String line = "(λz (λz  (λz   y)      ))";
+        String line = "(( (λz z) x ) ( (λz z) y ))";
         Node root = parseOne(getTokens(line));
         System.out.println(root);
 
         Finder f = new LeftMostFinder();
         f.init(root);
-        if (f.find()) {
-            System.out.println("found!");
-            System.out.println(f.getApp());
-        } else {
-            System.out.println("not found!");
+        while (true) {
+            System.out.println("-------");
+            System.out.println(root);
+            if (f.find()) {
+                System.out.println("found! => " + f.getApp());
+                f.replace(parseOne(getTokens("z")));
+            } else {
+                System.out.println("not found!");
+                break;
+            }
         }
-
     }
 }
