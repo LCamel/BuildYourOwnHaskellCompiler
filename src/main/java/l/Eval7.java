@@ -1,5 +1,7 @@
 package l;
 
+
+import java.util.Arrays;
 import java.util.LinkedList;
 
 
@@ -29,8 +31,8 @@ public class Eval7 {
     }
 
     private static class LeftMostFinder implements Finder {
-        private LinkedList<Node> path;
-        private LinkedList<Boolean> isAppLeft;
+        private LinkedList<Node> path = new LinkedList<>();
+        private LinkedList<Boolean> isAppLeft = new LinkedList<>();
 
         @Override
         public void init(Node root) {
@@ -102,8 +104,144 @@ public class Eval7 {
     }
     public static void eval(Node root) {
         Finder f = new LeftMostFinder();
+        f.init(root);
         while (f.find()) {
             f.replace(f.getApp().apply());
         }
+    }
+
+    public static class AppImpl implements App {
+        private Node left;
+        private Node right;
+        public AppImpl(Node left, Node right) {
+            this.left = left;
+            this.right = right;
+        }
+        @Override
+        public Node getLeft() {
+            return left;
+        }
+        @Override
+        public void setLeft(Node node) {
+            left = node;
+        }
+        @Override
+        public Node getRight() {
+            return right;
+        }
+        @Override
+        public void setRight(Node node) {
+            right = node;
+        }
+        // tmp
+        @Override
+        public String toString() {
+            return "( " + left + "  " + right + " )";
+        }
+    }
+    public static class LamImpl implements Lam {
+        private Node body;
+        private String param;
+        public LamImpl(String param, Node body) {
+            this.param = param;
+            this.body = body;
+        }
+        @Override
+        public Node getBody() {
+            return body;
+        }
+        @Override
+        public void setBody(Node node) {
+            body = node;
+        }
+        @Override
+        public Node apply(Node arg) {
+            throw new RuntimeException("not implemented");
+        }
+        // tmp
+        @Override
+        public String toString() {
+            return "(λ" + param + " " + body + ")";
+        }
+    }
+    public static class VarImpl implements Var {
+        private String name;
+        public VarImpl(String name) {
+            this.name = name;
+        }
+        // tmp
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+
+
+
+
+
+
+
+
+    private static LinkedList<String> getTokens(String line) {
+        String[] tmp = line.replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").trim().split("\\s+");
+        return new LinkedList<String>(Arrays.asList(tmp));
+    }
+    private static Node parseOne(LinkedList<String> tokens) {
+        // System.out.println("====");
+        // System.out.println("tokens: " + tokens);
+        String token = tokens.removeFirst();
+        // System.out.println("tokens: " + tokens);
+        switch (token) {
+        case "(":
+            Node tmp = null;
+            switch (tokens.getFirst().charAt(0)) {
+            case '\\':
+            case '/':
+            case 'λ':
+                tmp = new LamImpl(tokens.removeFirst().substring(1), parseOne(tokens));
+                break;
+            default:
+                tmp = new AppImpl(parseOne(tokens), parseOne(tokens));
+            }
+            if (tokens.removeFirst().equals(")") == false) {
+                throw new RuntimeException("no matching ')'");
+            }
+            return tmp;
+        case ")":
+            throw new RuntimeException("bad ')'");
+        default:
+            return new VarImpl(token);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static void main(String[] args) {
+        String line = "(λz (λz  (λz   y)      ))";
+        Node root = parseOne(getTokens(line));
+        System.out.println(root);
+
+        Finder f = new LeftMostFinder();
+        f.init(root);
+        if (f.find()) {
+            System.out.println("found!");
+            System.out.println(f.getApp());
+        } else {
+            System.out.println("not found!");
+        }
+
     }
 }
