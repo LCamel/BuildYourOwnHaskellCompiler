@@ -28,16 +28,23 @@ public class Eval7 {
         public boolean find();
         public App getApp();
         public void replace(Node node);
+        public Node getRoot(); // for final result / debugging. Since root may be replaced
     }
 
     private static class LeftMostFinder implements Finder {
         private LinkedList<Node> path = new LinkedList<>();
         private LinkedList<Boolean> isAppLeft = new LinkedList<>();
+        private Node root;
 
         @Override
         public void init(Node root) {
+            this.root = root;
             path.push(root);
             isAppLeft.push(false);
+        }
+        @Override
+        public Node getRoot() {
+            return root;
         }
 
         @Override
@@ -58,6 +65,9 @@ public class Eval7 {
                 } else {
                     ((App) parent).setRight(node);
                 }
+            } else if (parent == null) {
+                // this is the top
+                root = node;
             } else {
                 throw new RuntimeException("replace: how come? " + parent);
             }
@@ -67,6 +77,7 @@ public class Eval7 {
 
         @Override
         public boolean find() {
+            System.out.println("find: path: " + path);
     //        if (path.isEmpty()) {
     //            return false;
     //        }
@@ -238,16 +249,20 @@ public class Eval7 {
 
         Finder f = new LeftMostFinder();
         f.init(root);
+        int i = 0;
         while (true) {
             System.out.println("-------");
-            System.out.println(root);
+            System.out.println(f.getRoot());
+            //System.out.println(root); // <-- not corret
             if (f.find()) {
                 System.out.println("found! => " + f.getApp());
-                f.replace(parseOne(getTokens("z")));
+                f.replace(parseOne(getTokens("(λp (λq r))")));
             } else {
                 System.out.println("not found!");
                 break;
             }
+            i++;
+            if (i > 2) break;
         }
     }
 }
