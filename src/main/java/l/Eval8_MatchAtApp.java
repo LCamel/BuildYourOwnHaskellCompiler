@@ -3,6 +3,7 @@ package l;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Stack;
 
 
 public class Eval8_MatchAtApp {
@@ -32,8 +33,8 @@ public class Eval8_MatchAtApp {
     }
 
     private static class LeftMostFinder implements Finder {
-        private LinkedList<Node> path = new LinkedList<>();
-        private LinkedList<Boolean> isAppLeft = new LinkedList<>();
+        private Stack<Node> path = new Stack<>();
+        private Stack<Boolean> isAppLeft = new Stack<>();
         private Node root;
 
         @Override
@@ -54,52 +55,57 @@ public class Eval8_MatchAtApp {
 
         @Override
         public void replace(Node node) {
-            path.pop();
-
-            Node parent = path.peek();
-            if (parent instanceof Lam) {
-                ((Lam) parent).setBody(node);
-            } else if (parent instanceof App) {
-                if (isAppLeft.peek()) {
-                    ((App) parent).setLeft(node);
-                } else {
-                    ((App) parent).setRight(node);
-                }
-            } else if (parent == null) {
-                // this is the top
-                root = node;
+            if (isAppLeft.peek() == true) {
+                path.pop();
+                isAppLeft.pop();
+                App parent = (App) path.peek();
+                parent.setLeft(node);
             } else {
-                throw new RuntimeException("replace: how come? " + parent);
-            }
+                // isAppLeft does not have to be changed
+                path.pop();
+                if (path.isEmpty()) {
+                    path.push(node);
+                    root = node;
+                } else {
+                    Node parent = path.peek();
+                    path.push(node);
 
-            path.push(node);
+                    if (parent instanceof App) {
+                        ((App) parent).setRight(node);
+                    } else if (parent instanceof Lam) {
+                        ((Lam) parent).setBody(node);
+                    } else {
+                        throw new RuntimeException("replace: how come? " + parent);
+                    }
+
+                }
+            }
         }
 
         @Override
         public boolean find() {
             System.out.println("find: path: " + path);
-    //        if (path.isEmpty()) {
-    //            return false;
-    //        }
+
             while (true) {
                 Node curr = path.peek();
-                if (curr instanceof Lam) {
-                    if (Boolean.TRUE.equals(isAppLeft.peek()) && path.get(1) instanceof App) {
-                        path.pop();
-                        isAppLeft.pop();
+                if (curr instanceof App) {
+                    Node left = ((App) curr).getLeft();
+                    if (left instanceof Lam) {
                         return true;
+                    } else {
+                        path.push(left);
+                        isAppLeft.push(true);
                     }
+                } else if (curr instanceof Lam) {
                     path.push(((Lam) curr).getBody());
                     isAppLeft.push(false);
-                } else if (curr instanceof App) {
-                    path.push(((App) curr).getLeft());
-                    isAppLeft.push(true);
                 } else if (curr instanceof Var) {
                     while (true) {
                         path.pop();
-                        if (isAppLeft.pop() == true) { // the only one case who has next sibling
-                            isAppLeft.push(false);
+                        boolean isLeft = isAppLeft.pop();
+                        if (isLeft == true) { // the only one case who has a next sibling
                             path.push(((App) path.peek()).getRight());
+                            isAppLeft.push(false);
                             break;
                         }
 
@@ -249,7 +255,6 @@ public class Eval8_MatchAtApp {
 
         Finder f = new LeftMostFinder();
         f.init(root);
-        int i = 0;
         while (true) {
             System.out.println("-------");
             System.out.println(f.getRoot());
@@ -261,8 +266,6 @@ public class Eval8_MatchAtApp {
                 System.out.println("not found!");
                 break;
             }
-            i++;
-            if (i > 2) break;
         }
     }
 }
