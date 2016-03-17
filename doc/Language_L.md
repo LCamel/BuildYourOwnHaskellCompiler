@@ -33,4 +33,21 @@ Language L
 
 
 
+====
+2016-03-12
 
+嘗試著在 algorithm 端寫出對 Node 的需求, 比方說 AppFinder.Lam.
+但是後來其他地方不是在 find, 也引用了這樣的宣告.
+
+後來想, 應該是依照其性質功能來命名, 不是跟著 algorithm 走.
+就像 Comparable 也不是跟著 sort 走一樣.
+
+分支: 有些 algorithm 用不到 Lam 的 param, 用不到 Var 的 name.
+分支: 有些 algorithm 的寫法是 immutable 的, 不需要 setBody / setLeft / ..
+
+明確寫出 algorithm 對 data 的需求, 相較於只有一種 App/Lam/Var, 得到了什麼?
+演算法真的容易重用了嗎?
+
+像走 sub/deb/env 路線的, 能共用的東西還剩多少?
+
+又卡在這邊太久了.

@@ -2,7 +2,7 @@ package l3;
 import l3.Nodes.Node;
 
 public class Basic {
-    public static class App implements Nodes.WriteWithName.App {
+    public static class App implements Nodes.WriteName.App, Nodes.Apply.App {
         private Node left;
         private Node right;
         public App(Node left, Node right) { this.left = left; this.right = right; }
@@ -19,7 +19,7 @@ public class Basic {
             return "(" + left + " " + right + ")";
         }
     }
-    public static class Lam implements Nodes.WriteWithName.Lam {
+    public static class Lam implements Nodes.WriteName.Lam, Nodes.Apply.Lam {
         private String param;
         private Node body;
         public Lam(String param, Node body) { this.param = param; this.body = body; }
@@ -35,8 +35,12 @@ public class Basic {
         public String toString() {
             return "(λ" + param + " " + body + ")";
         }
+        @Override
+        public Node apply(Node node) {
+            return this;
+        }
     }
-    public static class Var implements Nodes.WriteWithName.Var {
+    public static class Var implements Nodes.WriteName.Var, Nodes.Apply.Var {
         private String name;
         public Var(String name) { this.name = name; }
         @Override

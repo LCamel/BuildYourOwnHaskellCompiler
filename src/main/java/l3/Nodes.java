@@ -1,7 +1,10 @@
 package l3;
 
 
-
+//
+// Node -> Read -> ReadName \
+//              -> Write    / WriteName
+//              -> Apply
 
 public interface Nodes {
     public interface Node {
@@ -18,7 +21,8 @@ public interface Nodes {
         public interface Var extends Node {
         }
     }
-    public interface ReadWithName {
+
+    public interface ReadName {
         public interface App extends Read.App {
         }
         public interface Lam extends Read.Lam {
@@ -28,6 +32,7 @@ public interface Nodes {
             String getName();
         }
     }
+
     public interface Write {
         public interface App extends Read.App {
             void setLeft(Node node);
@@ -39,14 +44,25 @@ public interface Nodes {
         public interface Var extends Read.Var {
         }
     }
-    public interface WriteWithName {
-        public interface App extends ReadWithName.App, Write.App {
+
+    public interface WriteName {
+        public interface App extends ReadName.App, Write.App {
         }
-        public interface Lam extends ReadWithName.Lam, Write.Lam {
+        public interface Lam extends ReadName.Lam, Write.Lam {
             void setParam(String param);
         }
-        public interface Var extends ReadWithName.Var, Write.Var {
+        public interface Var extends ReadName.Var, Write.Var {
             void setName(String name);
+        }
+    }
+    public interface Apply {
+        public interface App extends Read.App {
+            public default Node apply() { return ((Lam) getLeft()).apply(getRight()); }
+        }
+        public interface Lam extends Read.Lam {
+            public Node apply(Node node);
+        }
+        public interface Var extends Read.Var {
         }
     }
 
