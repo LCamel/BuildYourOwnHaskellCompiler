@@ -42,9 +42,9 @@ public class Basic {
         @Override
         public Node apply(Node arg) {
             Node result = sub(this, arg);
-            System.out.println("==== apply");
-            System.out.println("    " + this);
-            System.out.println("    " + result);
+            //System.out.println("==== apply");
+            //System.out.println("    " + this);
+            //System.out.println("    " + result);
             return result;
         }
     }
@@ -100,6 +100,7 @@ public class Basic {
             } else {
                 boolean conflict = freeVars.contains(lam.getParam());
                 if (conflict) {
+                    // tradeoff between speed and readability
                     String newName = getNewName();
                     Node newBody = changeName(lam.getBody(), lam.getParam(), newName);
                     return new Lam(newName, sub(newBody, param, arg, freeVars));
