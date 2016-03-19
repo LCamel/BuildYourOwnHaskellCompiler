@@ -3,6 +3,8 @@ import java.util.Set;
 
 import l3.Nodes.Node;
 
+import org.json.JSONArray;
+
 public class Basic {
     public static class App implements Nodes.WriteName.App, Nodes.Apply.App {
         private Node left;
@@ -39,7 +41,11 @@ public class Basic {
         }
         @Override
         public Node apply(Node arg) {
-            return sub(this, arg);
+            Node result = sub(this, arg);
+            System.out.println("==== apply");
+            System.out.println("    " + this);
+            System.out.println("    " + result);
+            return result;
         }
     }
     public static class Var implements Nodes.WriteName.Var, Nodes.Apply.Var {
@@ -135,6 +141,23 @@ public class Basic {
         }
     }
 
+    // ===================
+
+    public static Node convertFromJson(String s) {
+        return convertFromJson(new JSONArray(s));
+    }
+    private static Node convertFromJson(JSONArray a) {
+        switch (a.getString(0)) {
+        case "var":
+            return new Var(a.getString(1));
+        case "app":
+            return new App(convertFromJson(a.getJSONArray(1)), convertFromJson(a.getJSONArray(2)));
+        case "lam":
+            return new Lam(a.getString(1), convertFromJson(a.getJSONArray(2)));
+        default:
+            throw new RuntimeException("???");
+        }
+    }
     public static void main(String[] args) {
         Lam lam = (Lam) Basic.parse("( λx (λy x)) )");
         Node arg = Basic.parse("y");
