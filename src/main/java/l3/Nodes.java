@@ -60,7 +60,7 @@ public interface Nodes {
             public default Node apply() { return ((Lam) getLeft()).apply(getRight()); }
         }
         public interface Lam extends Read.Lam {
-            public Node apply(Node node);
+            public Node apply(Node arg);
         }
         public interface Var extends Read.Var {
         }

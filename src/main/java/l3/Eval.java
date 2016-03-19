@@ -14,6 +14,7 @@ public class Eval {
         replacer.init(root);
         while (replacer.find()) {
             App app = (App) replacer.getApp();
+            System.out.println("=== found: app: " + app);
             Node newNode = app.apply();
             replacer.replace(newNode);
         }
