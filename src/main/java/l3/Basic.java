@@ -1,4 +1,5 @@
 package l3;
+import java.util.HashSet;
 import java.util.Set;
 
 import l3.Nodes.Node;
@@ -142,8 +143,52 @@ public class Basic {
         }
     }
 
-    // ===================
+    // 限制只有 free var 可以換掉
+    // 而且只有在一開始的時候一起換掉
+    public static interface ReplaceFreeVar {
+        public Node replace(Var var);
+    }
+    public static Node scanFreeVar(Node node, ReplaceFreeVar r) {
+        return scanFreeVar(node, r, new HashSet<String>());
+    }
+    private static Node scanFreeVar(Node node, ReplaceFreeVar r, Set<String> params) {
+        if (node instanceof App) {
+            App app = (App) node;
+            return new App(scanFreeVar(app.getLeft(), r, params), scanFreeVar(app.getRight(), r, params));
+        } else if (node instanceof Lam) {
+            Lam lam = (Lam) node;
+            HashSet<String> newParams = new HashSet<>(params); // TODO: efficiency
+            newParams.add(lam.getParam());
+            return new Lam(lam.getParam(), scanFreeVar(lam.getBody(), r, newParams));
+        } else if (node instanceof Var) {
+            Var var = (Var) node;
+            if (params.contains(var.getName())) { // bounded
+                return node;
+            } else { // free
+                return r.replace(var);
+            }
+        } else {
+            throw new RuntimeException("??");
+        }
+    }
 
+    public static class NativeInt implements Nodes.ReadName.Var, Nodes.Apply.Var {
+        private int i;
+        public NativeInt(int i) { this.i = i; }
+        @Override
+        public String getName() {
+            return null;
+        }
+        @Override
+        public String toString() {
+            return "#" + i;
+        }
+    }
+    public static Node replaceNative(Node node) {
+        return scanFreeVar(node, var -> new NativeInt(Integer.parseInt(var.getName())));
+    }
+
+    // ===================
     public static Node convertFromJson(String s) {
         return convertFromJson(new JSONArray(s));
     }
@@ -159,10 +204,19 @@ public class Basic {
             throw new RuntimeException("???");
         }
     }
+
     public static void main(String[] args) {
-        Lam lam = (Lam) Basic.parse("( λx (λy x)) )");
-        Node arg = Basic.parse("y");
-        Node result = sub(lam, arg);
-        System.out.println("result: " + result);
+        if (false) {
+            Lam lam = (Lam) Basic.parse("( λx (λy x)) )");
+            Node arg = Basic.parse("y");
+            Node result = sub(lam, arg);
+            System.out.println("result: " + result);
+        }
+
+        if (true) {
+            Node node = Basic.parse("( λx (λy 3)) )");
+            Node withNative = replaceNative(node);
+            System.out.println("withNative: " + withNative);
+        }
     }
 }
