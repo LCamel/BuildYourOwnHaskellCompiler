@@ -33,3 +33,73 @@ finder 和 replacer
 雖然 algorithm 可以等價做到純 recursive 不用 return 出來, 但是和描述對起來就不是那麼直觀.
 
 
+把 freevar 換成 native integer 可以了.
+再來是 native function.
+
+print.
+IO.
+pair.
+
+Pair 一般化: tuple
+
+    function (x, y) {
+        return new function(onXY) {
+          onXY(x, y);
+        }
+    }
+
+    \x \y (\onXY x y)
+
+    node --harmony
+    > mkPair = x => y => onXY => onXY(x)(y);
+    [Function]
+    > fst = x => y => x
+    [Function]
+    > snd = x => y => y
+    [Function]
+    > pair34 = mkPair(3)(4)
+    [Function]
+    > pair34(fst)
+    3
+    > pair34(snd)
+    4
+
+
+IO
+
+IO () 是個 function, 給 application 用的是 ()
+IO Int 是個 function, 給 application 用的是 Int
+
+world -> (a, world)
+
+print 是 Int -> IO ()
+也就是 Int -> ( world -> ((), world) )
+
+以前是 return 一個 JavaScript 的 function
+
+現在 return 一個 Lam, 能 apply 的 Lam, 但不用 getParam, 甚至不用 getBody (吧)
+
+結果發現, 原先 AppFinder 就有分支需要 getBody().
+雖然在 app 下直接 lam 的 case 只會叫到 apply,
+但是如果上面沒有 app 罩著, 就會想要 getBody(), 就爆炸了.
+
+像去化簡 ((+ 3) 4) 還 OK
+去化簡 (+ 3) 可能就掛了, 因為 (+ 3) 回來是個 Lam, 就會往下鑽.
+
+
+  
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+

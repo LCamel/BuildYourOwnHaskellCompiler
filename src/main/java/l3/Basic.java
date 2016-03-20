@@ -183,9 +183,49 @@ public class Basic {
         public String toString() {
             return "#" + i;
         }
+        public int getInt() {
+            return i;
+        }
+    }
+
+    private static abstract class NoBodyLam implements Nodes.Apply.Lam {
+        @Override
+        public Node getBody() {
+            throw new UnsupportedOperationException("no body no body but you");
+        }
     }
     public static Node replaceNative(Node node) {
-        return scanFreeVar(node, var -> new NativeInt(Integer.parseInt(var.getName())));
+        //return scanFreeVar(node, var -> new NativeInt(Integer.parseInt(var.getName())));
+        //return scanFreeVar(node, var -> { return new NativeInt(Integer.parseInt(var.getName())); } );
+        return scanFreeVar(node, new ReplaceFreeVar() {
+            @Override
+            public Node replace(Var var) {
+                String name = var.getName();
+                try {
+                    return new NativeInt(Integer.parseInt(name));
+                } catch (Exception e) {
+                    if (name.equals("+")) {
+                        return new NoBodyLam() {
+                            @Override
+                            public Node apply(final Node arg0) {
+
+                                return new NoBodyLam() {
+                                    @Override
+                                    public Node apply(final Node arg1) {
+                                        int i0 = ((NativeInt) arg0).getInt();
+                                        int i1 = ((NativeInt) arg1).getInt();
+                                        return new NativeInt(i0 + i1);
+                                    }
+                                };
+
+                            }
+                        };
+                    } else {
+                        throw new RuntimeException("unknown free variable: " + name);
+                    }
+                }
+            }
+        });
     }
 
     // ===================
@@ -214,7 +254,7 @@ public class Basic {
         }
 
         if (true) {
-            Node node = Basic.parse("( λx (λy 3)) )");
+            Node node = Basic.parse("((+ 3) 5)");
             Node withNative = replaceNative(node);
             System.out.println("withNative: " + withNative);
         }
