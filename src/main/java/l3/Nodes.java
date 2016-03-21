@@ -1,6 +1,7 @@
 package l3;
 
 
+
 //
 // Node -> Read -> ReadName \
 //              -> Write    / WriteName
@@ -60,6 +61,8 @@ public interface Nodes {
             public default Node apply() { return ((Lam) getLeft()).apply(getRight()); }
         }
         public interface Lam extends Read.Lam {
+            @Override
+            public default Node getBody() { throw new UnsupportedOperationException("ouch"); }
             public Node apply(Node arg);
         }
         public interface Var extends Read.Var {

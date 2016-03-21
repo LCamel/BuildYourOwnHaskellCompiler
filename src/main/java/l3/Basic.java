@@ -188,12 +188,6 @@ public class Basic {
         }
     }
 
-    private static abstract class NoBodyLam implements Nodes.Apply.Lam {
-        @Override
-        public Node getBody() {
-            throw new UnsupportedOperationException("no body no body but you");
-        }
-    }
     public static Node replaceNative(Node node) {
         //return scanFreeVar(node, var -> new NativeInt(Integer.parseInt(var.getName())));
         //return scanFreeVar(node, var -> { return new NativeInt(Integer.parseInt(var.getName())); } );
@@ -205,11 +199,10 @@ public class Basic {
                     return new NativeInt(Integer.parseInt(name));
                 } catch (Exception e) {
                     if (name.equals("+")) {
-                        return new NoBodyLam() {
+                        return new Nodes.Apply.Lam() {
                             @Override
                             public Node apply(final Node arg0) {
-
-                                return new NoBodyLam() {
+                                return new Nodes.Apply.Lam() {
                                     @Override
                                     public Node apply(final Node arg1) {
                                         int i0 = ((NativeInt) arg0).getInt();

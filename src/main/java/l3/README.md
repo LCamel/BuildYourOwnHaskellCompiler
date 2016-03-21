@@ -87,6 +87,16 @@ print 是 Int -> IO ()
 去化簡 (+ 3) 可能就掛了, 因為 (+ 3) 回來是個 Lam, 就會往下鑽.
 
 
+實作了 "+", 覺得 Apply.Lam 繼承 Apply.Read 有點多餘, 多了用不到的 getBody().
+用個 abstract class / default method.
+或者是分家分更細. 在 finder 裡面分兩種 Lam: 沒要 body 要 apply 的 / 要 body 沒要 apply 的.
+這樣和 finder 的用戶怎麼講呢?
+"App 左下的 Lam 只要能 apply 就好, 其他地方的 Lam 則要能 getBody."
+
+
+
+
+
   
 
 
