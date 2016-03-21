@@ -199,20 +199,12 @@ public class Basic {
                     return new NativeInt(Integer.parseInt(name));
                 } catch (Exception e) {
                     if (name.equals("+")) {
-                        return new Nodes.Apply.Lam() {
-                            @Override
-                            public Node apply(final Node arg0) {
-                                return new Nodes.Apply.Lam() {
-                                    @Override
-                                    public Node apply(final Node arg1) {
-                                        int i0 = ((NativeInt) arg0).getInt();
-                                        int i1 = ((NativeInt) arg1).getInt();
-                                        return new NativeInt(i0 + i1);
-                                    }
-                                };
-
-                            }
-                        };
+                            return (Nodes.Apply.Lam) (arg0 -> ((Nodes.Apply.Lam) (arg1 ->
+                                new NativeInt(
+                                        ((NativeInt) arg0).getInt()
+                                        +
+                                        ((NativeInt) arg1).getInt())
+                                )));
                     } else {
                         throw new RuntimeException("unknown free variable: " + name);
                     }
