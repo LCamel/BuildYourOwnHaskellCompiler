@@ -20,6 +20,8 @@ public class Basic {
         @Override
         public void setRight(Node node) { right = node; }
         @Override
+        public Node apply() { return ((Nodes.Apply.Lam) left).apply(right); }
+        @Override
         public String toString() {
             return "(" + left + " " + right + ")";
         }

@@ -5,21 +5,24 @@ package l3;
 //
 // Node -> Read -> ReadName \
 //              -> Write    / WriteName
-//              -> Apply
+//      -> Apply
 
 public interface Nodes {
     public interface Node {
+        public interface App extends Node { }
+        public interface Lam extends Node { }
+        public interface Var extends Node { }
     }
 
     public interface Read { // as a namespace
-        public interface App extends Node {
+        public interface App extends Node.App {
             Node getLeft();
             Node getRight();
         }
-        public interface Lam extends Node {
+        public interface Lam extends Node.Lam {
             Node getBody();
         }
-        public interface Var extends Node {
+        public interface Var extends Node.Var {
         }
     }
 
@@ -56,16 +59,15 @@ public interface Nodes {
             void setName(String name);
         }
     }
+
     public interface Apply {
-        public interface App extends Read.App {
-            public default Node apply() { return ((Lam) getLeft()).apply(getRight()); }
+        public interface App extends Node.App {
+            Node apply();
         }
-        public interface Lam extends Read.Lam {
-            @Override
-            public default Node getBody() { throw new UnsupportedOperationException("ouch"); }
-            public Node apply(Node arg);
+        public interface Lam extends Node.Lam {
+            Node apply(Node arg);
         }
-        public interface Var extends Read.Var {
+        public interface Var extends Node.Var {
         }
     }
 

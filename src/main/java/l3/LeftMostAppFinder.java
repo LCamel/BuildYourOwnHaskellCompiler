@@ -4,7 +4,6 @@ import java.util.Stack;
 
 import l3.Nodes.Node;
 import l3.Nodes.Read.App;
-import l3.Nodes.Read.Lam;
 import l3.Nodes.Read.Var;
 
 public class LeftMostAppFinder implements AppFinder {
@@ -27,19 +26,21 @@ public class LeftMostAppFinder implements AppFinder {
     @Override
     public boolean find() {
         //System.out.println("find: path: " + path);
+        // 隨著 runtime 時 Lam 所在的位置, 對 Lam 的期待也不同
+        // 難避免 runtime cast 失敗. 或許有辦法, 不過可能挺複雜
 
         while (true) {
             Node curr = path.peek();
             if (curr instanceof App) {
                 Node left = ((App) curr).getLeft();
-                if (left instanceof Lam) {
+                if (left instanceof Nodes.Apply.Lam) {
                     return true;
                 } else {
                     path.push(left);
                     isAppLeft.push(true);
                 }
-            } else if (curr instanceof Lam) {
-                path.push(((Lam) curr).getBody());
+            } else if (curr instanceof Nodes.Read.Lam) {
+                path.push(((Nodes.Read.Lam) curr).getBody());
                 isAppLeft.push(false);
             } else if (curr instanceof Var) {
                 while (true) {
