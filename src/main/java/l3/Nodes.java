@@ -8,72 +8,72 @@ package l3;
 //      -> Apply
 
 public interface Nodes {
-    public interface Node {
-        public interface App extends Node { }
-        public interface Lam extends Node { }
-        public interface Var extends Node { }
+    interface Node {
+        interface App extends Node { }
+        interface Lam extends Node { }
+        interface Var extends Node { }
     }
 
-    public interface Read { // as a namespace
-        public interface App extends Node.App {
+    interface Read { // as a namespace
+        interface App extends Node.App {
             Node getLeft();
             Node getRight();
         }
-        public interface Lam extends Node.Lam {
+        interface Lam extends Node.Lam {
             Node getBody();
         }
-        public interface Var extends Node.Var {
+        interface Var extends Node.Var {
         }
     }
 
-    public interface ReadName {
-        public interface App extends Read.App {
+    interface ReadName {
+        interface App extends Read.App {
         }
-        public interface Lam extends Read.Lam {
+        interface Lam extends Read.Lam {
             String getParam();
         }
-        public interface Var extends Read.Var {
+        interface Var extends Read.Var {
             String getName();
         }
     }
 
-    public interface Write {
-        public interface App extends Read.App {
+    interface Write {
+        interface App extends Read.App {
             void setLeft(Node node);
             void setRight(Node node);
         }
-        public interface Lam extends Read.Lam {
+        interface Lam extends Read.Lam {
             void setBody(Node node);
         }
-        public interface Var extends Read.Var {
+        interface Var extends Read.Var {
         }
     }
 
-    public interface WriteName {
-        public interface App extends ReadName.App, Write.App {
+    interface WriteName {
+        interface App extends ReadName.App, Write.App {
         }
-        public interface Lam extends ReadName.Lam, Write.Lam {
+        interface Lam extends ReadName.Lam, Write.Lam {
             void setParam(String param);
         }
-        public interface Var extends ReadName.Var, Write.Var {
+        interface Var extends ReadName.Var, Write.Var {
             void setName(String name);
         }
     }
 
-    public interface Apply {
-        public interface App extends Node.App {
+    interface Apply {
+        interface App extends Node.App {
             Node apply();
         }
-        public interface Lam extends Node.Lam {
+        interface Lam extends Node.Lam {
             Node apply(Node arg);
         }
-        public interface Var extends Node.Var {
+        interface Var extends Node.Var {
         }
     }
 
-    public interface Factory {
-        public Read.App newApp(Node left, Node right);
-        public Read.Lam newLam(String param, Node body);
-        public Read.Var newVar(String name);
+    interface Factory {
+        Read.App newApp(Node left, Node right);
+        Read.Lam newLam(String param, Node body);
+        Read.Var newVar(String name);
     }
 }
