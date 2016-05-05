@@ -203,7 +203,7 @@ public class Basic {
                     if (name.equals("+")) {
                             return (Nodes.Apply.Lam) (arg0 -> ((Nodes.Apply.Lam) (arg1 ->
                                 new NativeInt(
-                                        ((NativeInt) arg0).getInt()
+                                        ((NativeInt) arg0).getInt() // TODO: 這邊還需要 eval 過
                                         +
                                         ((NativeInt) arg1).getInt())
                                 )));

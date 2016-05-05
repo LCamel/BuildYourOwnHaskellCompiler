@@ -94,14 +94,66 @@ print 是 Int -> IO ()
 "App 左下的 Lam 只要能 apply 就好, 其他地方的 Lam 則要能 getBody."
 
 
+====
+
+兩個要做的
+* function 的 argument 只會被 eval 一次
+* IO
+
+看只 eval 一次.
+這樣真的沒問題嗎?
+
+動機是類似
+
+var f = (x => x + x);
+f(3 + 4);
+
+希望 3 + 4 不要被重複計算.
+本來想說是不是只是個 nice to have 的 optimization for speed.
+但是如果這個傳進來的 argument 是 readInt() 之類的有 side effect 的東西就不行.
+(這個需求需要再確認一下: IO 是這樣進行的嗎?)
 
 
 
-  
+問題: 什麼時候可以記住 parameter 被算過的結果呢?
 
 
+Scenario: ((+ 4) ((+ 2) 3))
+對第一個 native Lam + 而言, 可能會拿到還沒化簡的 + 2 3
+所以在 native Lam 裡面還是需要去叫 eval 之類的東西
+
+
+
+先前的問題: native 裡面的東西如果和所需求的 type 不一樣怎麼辦?
+例如 (\x   ((+ x) 4)  )  會在 native + 裡面期待 arg0 是個 native Var Int 
+但是 x 只是個普通的 variable, cast 就死了
+怎樣避免呢? 只好假設算到 native 裡面的時候, x 已經被外面換過了.
+像 (    (\x   ((+ x) 4)  )    3     )
+剛好因為 "最左最外的先算", "可能"不會遇到? (沒有想清楚)
+這樣嚴重倚賴了 eval 的順序. (不過本來也就這樣?)
+不倚賴或許也可以, 只是要改成能吃這種 case 的想來挺複雜.
+不做又有不舒服的感覺.
+先前大概是在做 IO 的時候, 想說先化簡 main 看看, 結果沒帶 world 進去直接化簡就死了. (記得是這樣)
+
+
+..app
+lam arg
+
+arg 放進 lam 的 tree 裡面去, 放的位置有兩種可能
+* 產生了 app左下lam
+* 其他
 
  
+
+
+
+
+
+
+
+
+
+
 
 
 
