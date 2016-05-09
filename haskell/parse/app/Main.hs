@@ -33,6 +33,32 @@ getImportsFromModule :: Module foo -> [String]
 getImportsFromModule (Module _ _ _ importDecls _) = map (getModuleName . importModule) importDecls
 getModuleName :: ModuleName foo -> String
 getModuleName (ModuleName foo name) = name
+
+-- now let's collect them
+-- except the first module name, other module names might be contaminated by IO ...
+
+collect :: IO [String] -> (String -> IO (Module SrcSpanInfo, [String])) -> IO (Map String (Module SrcSpanInfo)) -> IO (Map String (Module SrcSpanInfo))
+collect ioNames f ioMap0 = do
+                             names <- ioNames
+                             map0 <- ioMap0
+                             case names of
+                               [] -> ioMap0
+                               n:ns -> if Map.member n map0
+                                         then ioMap0
+                                         else ioMap0
+  
+  
+--                                       (mod, newNames) <- f n
+--                                       map0
+--collect ioNames f map0 = ioNames >>= (\names -> case names of
+--                                                  [] -> map0
+--                                                  n:ns -> do
+--                                                            (mod, names) <- f n
+--                                                            map0
+--
+--                                     )
+
+
 {--
 main :: IO ()
 -- main = someFunc
