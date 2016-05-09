@@ -9,7 +9,31 @@ import Language.Haskell.Exts.SrcLoc (SrcSpanInfo)
 import Data.Map (Map)
 import qualified Data.Map as Map
 
+--main :: IO ()
+main = nameToModuleAndNames "A" >>= putStrLn . show
 
+-- name -> path :: String -> IO String
+-- path -> content :: String -> IO String
+-- content -> Module and names :: String -> (Module, [String])
+-- so...
+-- name -> Module and names :: String -> IO (Module, [String])
+
+nameToModuleAndNames :: String -> IO (Module SrcSpanInfo, [String])
+nameToModuleAndNames name = fmap moduleSrcToModuleAndNames (readFile $ "sample_input/" ++ name ++ ".hs")
+
+moduleSrcToModuleAndNames :: String -> (Module SrcSpanInfo, [String])
+moduleSrcToModuleAndNames srcStr = case parseModule srcStr of
+                                     ParseOk mod -> let
+                                                       names = getImportsFromModule mod
+                                                    in
+                                                       (mod, names)
+                                     ParseFailed _ _ -> error $ "bad src:\n" ++ srcStr
+
+getImportsFromModule :: Module foo -> [String]
+getImportsFromModule (Module _ _ _ importDecls _) = map (getModuleName . importModule) importDecls
+getModuleName :: ModuleName foo -> String
+getModuleName (ModuleName foo name) = name
+{--
 main :: IO ()
 -- main = someFunc
 main = do
@@ -23,12 +47,24 @@ main = do
            ParseOk moduleWithSrcSpanInfo -> putStrLn $ show $ getImportsFromModule moduleWithSrcSpanInfo
            ParseFailed _ _ -> putStrLn "Failed"
 
-type MyModuleName = String
-
-parseModuleRecursive :: MyModuleName -> Map MyModuleName (Module foo) -> Map MyModuleName (Module foo)
-parseModuleRecursive = undefined
 
 
+--collectModule :: String -> Map (String (Module SrcSpanInfo))
+--collectModule name = collector name moduleNameToModuleAndNames
+
+
+moduleSrcToModuleAndNames :: String -> (Module SrcSpanInfo, [String])
+moduleSrcToModuleAndNames srcStr = case parseModule srcStr of
+                                     ParseOk mod -> let
+                                                       names = getImportsFromModule mod
+                                                    in
+                                                       (mod, names)
+                                     ParseFailed _ _ -> error $ "bad src:\n" ++ srcStr
+
+moduleNameToModuleAndNames :: String -> IO (Module SrcSpanInfo, [String])
+moduleNameToModuleAndNames name = fmap moduleSrcToModuleAndNames (findModuleSource name)
+
+       
 -- parseModule :: String -> ParseResult (Module SrcSpanInfo)
 -- data ParseResult a
 --   ParseOk a
@@ -40,10 +76,18 @@ getModuleName :: ModuleName foo -> String
 getModuleName (ModuleName foo name) = name
 
 
-collector :: (Ord a) => a -> (a -> (b, [a])) -> Map a b
+findModuleSource :: String -> IO String
+findModuleSource name = readFile $ "sample_input/" ++ name ++ ".hs"
+
+srcToModule :: String -> Module SrcSpanInfo
+srcToModule srcStr = case parseModule srcStr of
+                       ParseOk blah -> blah
+                       ParseFailed _ _ -> error $ "bad src:\n" ++ srcStr
+
+collector :: (Ord a) => a -> (a -> IO (b, [a])) -> IO (Map a b)
 collector start f = collector0 [start] f Map.empty
 
-collector0 :: (Ord a) => [a] -> (a -> (b, [a])) -> Map a b -> Map a b
+collector0 :: (Ord a) => [a] -> (a -> IO (b, [a])) -> IO (Map a b) -> IO (Map a b)
 collector0 []     f m = m
 collector0 (a:as) f m = if Map.member a m
                           then collector0 as f m
@@ -54,6 +98,7 @@ collector0 (a:as) f m = if Map.member a m
 
 
 
+--}
 
 {--
 https://hackage.haskell.org/package/haskell-src-exts-1.17.1/docs/Language-Haskell-Exts-Annotated-Parser.html
