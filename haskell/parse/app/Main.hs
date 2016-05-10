@@ -10,7 +10,12 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 
 --main :: IO ()
-main = nameToModuleAndNames "A" >>= putStrLn . show
+-- main = nameToModuleAndNames "A" >>= putStrLn . show
+-- main = putStrLn . show $ (collect (pure ["A"]) nameToModuleAndNames (pure Map.empty) )
+main = do
+         foo <- (collect (pure ["A"]) nameToModuleAndNames (pure Map.empty) )
+         putStrLn (show foo)
+         putStrLn (show $ Map.keys foo)
 
 -- name -> path :: String -> IO String
 -- path -> content :: String -> IO String
@@ -44,87 +49,12 @@ collect ioNames f ioMap0 = do
                              case names of
                                [] -> ioMap0
                                n:ns -> if Map.member n map0
-                                         then ioMap0
-                                         else ioMap0
+                                         then collect (pure ns) f ioMap0
+                                         else do
+                                                (mod, ns2) <- f n
+                                                collect (pure (ns ++ ns2)) f (pure (Map.insert n mod map0))
   
   
---                                       (mod, newNames) <- f n
---                                       map0
---collect ioNames f map0 = ioNames >>= (\names -> case names of
---                                                  [] -> map0
---                                                  n:ns -> do
---                                                            (mod, names) <- f n
---                                                            map0
---
---                                     )
-
-
-{--
-main :: IO ()
--- main = someFunc
-main = do
-         lines <- readFile "app/Main.hs"
---         putStrLn lines
---         putStrLn $ show $ parseModule lines
-
-         case parseModule lines of
---           ParseOk moduleWithSrcSpanInfo -> putStrLn "Ok"
---           ParseOk moduleWithSrcSpanInfo -> getImportsFromModule moduleWithSrcSpanInfo
-           ParseOk moduleWithSrcSpanInfo -> putStrLn $ show $ getImportsFromModule moduleWithSrcSpanInfo
-           ParseFailed _ _ -> putStrLn "Failed"
-
-
-
---collectModule :: String -> Map (String (Module SrcSpanInfo))
---collectModule name = collector name moduleNameToModuleAndNames
-
-
-moduleSrcToModuleAndNames :: String -> (Module SrcSpanInfo, [String])
-moduleSrcToModuleAndNames srcStr = case parseModule srcStr of
-                                     ParseOk mod -> let
-                                                       names = getImportsFromModule mod
-                                                    in
-                                                       (mod, names)
-                                     ParseFailed _ _ -> error $ "bad src:\n" ++ srcStr
-
-moduleNameToModuleAndNames :: String -> IO (Module SrcSpanInfo, [String])
-moduleNameToModuleAndNames name = fmap moduleSrcToModuleAndNames (findModuleSource name)
-
-       
--- parseModule :: String -> ParseResult (Module SrcSpanInfo)
--- data ParseResult a
---   ParseOk a
-getImportsFromModule :: Module foo -> [String]
---getImportsFromModule :: Module SrcSpanInfo -> IO ()
-getImportsFromModule (Module _ _ _ importDecls _) = map (getModuleName . importModule) importDecls
-
-getModuleName :: ModuleName foo -> String
-getModuleName (ModuleName foo name) = name
-
-
-findModuleSource :: String -> IO String
-findModuleSource name = readFile $ "sample_input/" ++ name ++ ".hs"
-
-srcToModule :: String -> Module SrcSpanInfo
-srcToModule srcStr = case parseModule srcStr of
-                       ParseOk blah -> blah
-                       ParseFailed _ _ -> error $ "bad src:\n" ++ srcStr
-
-collector :: (Ord a) => a -> (a -> IO (b, [a])) -> IO (Map a b)
-collector start f = collector0 [start] f Map.empty
-
-collector0 :: (Ord a) => [a] -> (a -> IO (b, [a])) -> IO (Map a b) -> IO (Map a b)
-collector0 []     f m = m
-collector0 (a:as) f m = if Map.member a m
-                          then collector0 as f m
-                          else let
-                                 (b, as2) = f a
-                               in
-                                 collector0 (as ++ as2) f (Map.insert a b m)
-
-
-
---}
 
 {--
 https://hackage.haskell.org/package/haskell-src-exts-1.17.1/docs/Language-Haskell-Exts-Annotated-Parser.html
