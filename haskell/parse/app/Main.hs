@@ -9,6 +9,7 @@ import Language.Haskell.Exts.SrcLoc (SrcSpanInfo)
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Text.Groom
+import Debug.Trace
 
 --main :: IO ()
 -- main = nameToModuleAndNames "A" >>= putStrLn . show
@@ -40,7 +41,7 @@ transformModule :: Info -> Module SrcSpanInfo -> (Module SrcSpanInfo, Info)
 transformModule info m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = (Module srcSpanInfo maybeModuleHead modulePragmas importDecls (map transformDecl decls), info + 1)
 
 transformDecl :: Decl SrcSpanInfo -> Decl SrcSpanInfo
-transformDecl decl = decl
+transformDecl decl = trace ("****" ++ (groom decl) ++ "****\n") decl
 
 -- name -> path :: String -> IO String
 -- path -> content :: String -> IO String
