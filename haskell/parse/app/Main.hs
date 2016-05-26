@@ -13,9 +13,30 @@ import qualified Data.Map as Map
 -- main = nameToModuleAndNames "A" >>= putStrLn . show
 -- main = putStrLn . show $ (collect (pure ["A"]) nameToModuleAndNames (pure Map.empty) )
 main = do
+         -- foo :: Map String (Module SrcSpanInfo)
          foo <- (collect (pure ["A"]) nameToModuleAndNames (pure Map.empty) )
          putStrLn (show foo)
          putStrLn (show $ Map.keys foo)
+         let moduleA = Map.lookup "A" foo
+         case Map.lookup "A" foo of
+           Just moduleA -> do
+                             putStrLn "===== moduleA"
+                             putStrLn (show moduleA)
+                             putStrLn "===== transformModule moduleA"
+                             putStrLn (show $ transformModule 42 moduleA)
+                             putStrLn "====="
+
+blah :: String -> String
+blah x = x
+
+type Info = Int
+
+{--
+transformModule :: Module SrcSpanInfo -> Module SrcSpanInfo
+transformModule m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = m
+--}
+transformModule :: Info -> Module SrcSpanInfo -> (Module SrcSpanInfo, Info)
+transformModule info m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = (m, info + 1)
 
 -- name -> path :: String -> IO String
 -- path -> content :: String -> IO String
