@@ -3,11 +3,12 @@ module Main where
 import Lib
 import Language.Haskell.Exts.Annotated.Parser (parseModule)
 import Language.Haskell.Exts.Parser ( ParseResult(ParseOk, ParseFailed) )
-import Language.Haskell.Exts.Annotated.Syntax ( Module(Module), ModuleName(ModuleName), ImportDecl(importModule) )
+import Language.Haskell.Exts.Annotated.Syntax ( Module(Module), ModuleName(ModuleName), ImportDecl(importModule), Decl )
 import Language.Haskell.Exts.SrcLoc (SrcSpanInfo)
 -- import Data.Map (Map, empty)
 import Data.Map (Map)
 import qualified Data.Map as Map
+import Text.Groom
 
 --main :: IO ()
 -- main = nameToModuleAndNames "A" >>= putStrLn . show
@@ -21,7 +22,7 @@ main = do
          case Map.lookup "A" foo of
            Just moduleA -> do
                              putStrLn "===== moduleA"
-                             putStrLn (show moduleA)
+                             putStrLn (groom moduleA)
                              putStrLn "===== transformModule moduleA"
                              putStrLn (show $ transformModule 42 moduleA)
                              putStrLn "====="
@@ -36,7 +37,10 @@ transformModule :: Module SrcSpanInfo -> Module SrcSpanInfo
 transformModule m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = m
 --}
 transformModule :: Info -> Module SrcSpanInfo -> (Module SrcSpanInfo, Info)
-transformModule info m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = (m, info + 1)
+transformModule info m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = (Module srcSpanInfo maybeModuleHead modulePragmas importDecls (map transformDecl decls), info + 1)
+
+transformDecl :: Decl SrcSpanInfo -> Decl SrcSpanInfo
+transformDecl decl = decl
 
 -- name -> path :: String -> IO String
 -- path -> content :: String -> IO String

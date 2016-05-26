@@ -27,6 +27,7 @@ executable parse-exe
                      , parse
                      , haskell-src-exts == 1.17.1
                      , containers
+                     , groom
   default-language:    Haskell2010
 
 test-suite parse-test
