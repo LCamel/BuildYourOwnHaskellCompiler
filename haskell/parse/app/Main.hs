@@ -38,7 +38,9 @@ transformModule :: Module SrcSpanInfo -> Module SrcSpanInfo
 transformModule m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = m
 --}
 transformModule :: Info -> Module SrcSpanInfo -> (Module SrcSpanInfo, Info)
-transformModule info m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) = (Module srcSpanInfo maybeModuleHead modulePragmas importDecls (map transformDecl decls), info + 1)
+transformModule info m@(Module srcSpanInfo maybeModuleHead modulePragmas importDecls decls) =
+  let trDecls = map transformDecl decls in
+  (Module srcSpanInfo maybeModuleHead modulePragmas importDecls trDecls, info + 1)
 
 transformDecl :: Decl SrcSpanInfo -> Decl SrcSpanInfo
 transformDecl decl = trace ("****" ++ (groom decl) ++ "****\n") decl
