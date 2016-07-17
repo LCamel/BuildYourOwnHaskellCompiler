@@ -32,3 +32,10 @@ dataTypeOf (B 10) :: DataType
 
 從 /root/.stack/indices/Hackage/packages/haskell-src-exts/1.17.1/haskell-src-exts-1.17.1.tar.gz 中的 ./src/Language/Haskell/Exts/Annotated/Syntax.hs 來看, 有!
 
+不過還有個問題: 上面的例子是手上已經有 A 的 value 了, 有辦法不用 value 直接得到 A 的資訊嗎?
+(像 Java 的 Class.forName(), 不用 obj.getClass())
+
+另外有人說 polymorphic type 不能處理.
+http://stackoverflow.com/questions/10399685/haskell-getting-the-static-type-of-an-expression
+
+跑了 dataTypeOf Nothing 會抱怨 ambiguous.
